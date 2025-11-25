@@ -3,6 +3,7 @@ import "./globals.css";
 import { AuthProvider } from '../src/context/AuthContext';
 import { CartProvider } from '../src/context/CartContext';
 import Navbar from '../src/components/Navbar';
+import Footer from '../src/components/Footer';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,6 +30,7 @@ export default function RootLayout({ children }) {
             <main className="container" style={{ padding: '20px 0', minHeight: '80vh' }}>
               {children}
             </main>
+            <Footer />
           </CartProvider>
         </AuthProvider>
       </body>
