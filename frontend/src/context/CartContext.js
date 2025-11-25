@@ -39,8 +39,19 @@ export const CartProvider = ({ children }) => {
         }
     };
 
+    const removeFromCart = async (productId) => {
+        if (!user) return;
+        try {
+            const { data } = await api.delete(`/cart/${productId}`);
+            setCart(data);
+        } catch (error) {
+            console.error('Remove from cart failed:', error);
+            alert('Failed to remove item');
+        }
+    };
+
     return (
-        <CartContext.Provider value={{ cart, addToCart, fetchCart }}>
+        <CartContext.Provider value={{ cart, addToCart, removeFromCart, fetchCart }}>
             {children}
         </CartContext.Provider>
     );

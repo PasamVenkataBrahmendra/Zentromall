@@ -49,4 +49,26 @@ const addToCart = async (req, res) => {
     }
 };
 
-module.exports = { getCart, addToCart };
+// @desc    Remove item from cart
+// @route   DELETE /api/cart/:productId
+// @access  Private
+const removeFromCart = async (req, res) => {
+    try {
+        const cart = await Cart.findOne({ user: req.user._id });
+
+        if (cart) {
+            cart.items = cart.items.filter(item => item.product.toString() !== req.params.productId);
+            await cart.save();
+
+            // Re-populate to return full product details
+            await cart.populate('items.product', 'title price images slug');
+            res.json(cart);
+        } else {
+            res.status(404).json({ message: 'Cart not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { getCart, addToCart, removeFromCart };
