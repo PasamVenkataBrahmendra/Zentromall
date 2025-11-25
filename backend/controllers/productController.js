@@ -26,7 +26,9 @@ const getProducts = async (req, res) => {
 // @access  Public
 const getProductBySlug = async (req, res) => {
     try {
-        const product = await Product.findOne({ slug: req.params.slug }).populate('category', 'name').populate('seller', 'storeName');
+        const product = await Product.findOne({ slug: req.params.slug })
+            .populate('category', 'name')
+            .populate({ path: 'seller', select: 'storeName', strictPopulate: false });
 
         if (product) {
             res.json(product);
@@ -34,6 +36,7 @@ const getProductBySlug = async (req, res) => {
             res.status(404).json({ message: 'Product not found' });
         }
     } catch (error) {
+        console.error('Error in getProductBySlug:', error);
         res.status(500).json({ message: error.message });
     }
 };

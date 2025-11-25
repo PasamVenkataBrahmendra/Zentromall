@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { FaShoppingCart, FaUser, FaSearch, FaRobot } from 'react-icons/fa';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Navbar() {
     const { user, logout } = useAuth();
@@ -14,11 +14,14 @@ export default function Navbar() {
     const cartCount = cart?.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
 
     // Handle scroll effect
-    if (typeof window !== 'undefined') {
-        window.addEventListener('scroll', () => {
+    useEffect(() => {
+        const handleScroll = () => {
             setIsScrolled(window.scrollY > 10);
-        });
-    }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     return (
         <nav style={{
