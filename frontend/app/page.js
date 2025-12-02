@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import api from '../src/utils/api';
 import ProductCard from '../src/components/ProductCard';
 import Link from 'next/link';
-import { FaRocket, FaShieldAlt, FaTruck, FaHeadset, FaMobileAlt, FaTshirt, FaHome, FaGamepad } from 'react-icons/fa';
+import { FaRocket, FaShieldAlt, FaTruck, FaHeadset, FaMobileAlt, FaTshirt, FaHome, FaGamepad, FaMagic } from 'react-icons/fa';
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -13,7 +13,7 @@ export default function Home() {
     const fetchProducts = async () => {
       try {
         const { data } = await api.get('/products');
-        setProducts(data.slice(0, 8)); // Show first 8 products
+        setProducts(data); // Show all products
       } catch (error) {
         console.error('Error fetching products:', error);
       }
@@ -22,10 +22,10 @@ export default function Home() {
   }, []);
 
   const categories = [
-    { name: 'Electronics', icon: FaMobileAlt, color: 'var(--gradient-primary)' },
-    { name: 'Fashion', icon: FaTshirt, color: 'var(--gradient-accent)' },
-    { name: 'Home & Living', icon: FaHome, color: 'var(--gradient-success)' },
-    { name: 'Gaming', icon: FaGamepad, color: 'var(--gradient-primary)' }
+    { name: 'Electronics', icon: FaMobileAlt, color: 'linear-gradient(135deg, #3b82f6, #8b5cf6)' },
+    { name: 'Fashion', icon: FaTshirt, color: 'linear-gradient(135deg, #ec4899, #f43f5e)' },
+    { name: 'Home & Living', icon: FaHome, color: 'linear-gradient(135deg, #10b981, #3b82f6)' },
+    { name: 'Gaming', icon: FaGamepad, color: 'linear-gradient(135deg, #f59e0b, #ef4444)' }
   ];
 
   const benefits = [
@@ -36,218 +36,174 @@ export default function Home() {
   ];
 
   return (
-    <div>
+    <div style={{ paddingBottom: '100px' }}>
       {/* Hero Section */}
       <div style={{
-        background: 'var(--gradient-hero)',
-        borderRadius: 'var(--radius-2xl)',
-        padding: 'var(--space-3xl) var(--space-xl)',
-        color: 'white',
-        marginBottom: 'var(--space-3xl)',
-        textAlign: 'center',
         position: 'relative',
-        overflow: 'hidden'
+        minHeight: '80vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        marginTop: '-80px', // Pull behind navbar
+        paddingTop: '80px'
       }}>
-        {/* Floating Elements */}
+        {/* Animated Background Blobs */}
         <div style={{
           position: 'absolute',
-          top: '20%',
-          left: '10%',
-          width: '100px',
-          height: '100px',
-          background: 'rgba(255,255,255,0.1)',
-          borderRadius: 'var(--radius-full)',
-          animation: 'float 6s ease-in-out infinite'
+          top: '-20%',
+          left: '-10%',
+          width: '600px',
+          height: '600px',
+          background: 'radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%)',
+          filter: 'blur(60px)',
+          zIndex: -1,
+          animation: 'float 10s ease-in-out infinite'
         }} />
         <div style={{
           position: 'absolute',
-          bottom: '20%',
-          right: '15%',
-          width: '150px',
-          height: '150px',
-          background: 'rgba(255,255,255,0.1)',
-          borderRadius: 'var(--radius-full)',
-          animation: 'float 8s ease-in-out infinite'
+          bottom: '-20%',
+          right: '-10%',
+          width: '700px',
+          height: '700px',
+          background: 'radial-gradient(circle, rgba(236,72,153,0.3) 0%, transparent 70%)',
+          filter: 'blur(60px)',
+          zIndex: -1,
+          animation: 'float 15s ease-in-out infinite reverse'
         }} />
 
-        <div style={{ position: 'relative', zIndex: 1 }}>
+        <div className="container" style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
           <h1 style={{
-            fontSize: '3.5rem',
-            marginBottom: 'var(--space-lg)',
+            fontSize: '5rem',
             fontWeight: '800',
-            letterSpacing: '-1px',
-            textShadow: '0 4px 20px rgba(0,0,0,0.2)'
+            lineHeight: '1.1',
+            marginBottom: 'var(--space-lg)',
+            background: 'var(--gradient-text)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.2))'
           }}>
-            Welcome to ZentroMall
+            Future of Shopping <br /> is Here.
           </h1>
           <p style={{
-            fontSize: '1.25rem',
-            marginBottom: 'var(--space-2xl)',
-            opacity: 0.95,
-            maxWidth: '600px',
-            margin: '0 auto var(--space-2xl)'
+            fontSize: '1.5rem',
+            color: 'var(--text-muted)',
+            marginBottom: 'var(--space-xl)',
+            maxWidth: '700px',
+            margin: '0 auto var(--space-xl)'
           }}>
-            Discover amazing products at unbeatable prices. Shop with AI assistance or browse our curated collections.
+            Experience the next generation of e-commerce with AI-powered recommendations and immersive shopping.
           </p>
-          <div style={{
-            display: 'flex',
-            gap: 'var(--space-lg)',
-            justifyContent: 'center',
-            flexWrap: 'wrap'
+
+          <div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
+            <Link href="/shop" className="btn btn-primary" style={{ padding: '16px 40px', fontSize: '1.2rem' }}>
+              Start Exploring
+            </Link>
+            <Link href="/ai-shop" className="btn btn-outline" style={{ padding: '16px 40px', fontSize: '1.2rem' }}>
+              <FaMagic /> AI Assistant
+            </Link>
+          </div>
+
+          {/* Floating Cards (Decorative) */}
+          <div className="glass-card animate-float desktop-only" style={{
+            position: 'absolute',
+            top: '50%',
+            left: '0',
+            transform: 'translateY(-50%)',
+            padding: '20px',
+            width: '200px'
           }}>
-            <Link href="/shop" className="btn btn-lg" style={{
-              background: 'white',
-              color: 'var(--primary)',
-              fontWeight: '700'
-            }}>
-              Shop Now
-            </Link>
-            <Link href="/ai-shop" className="btn btn-lg" style={{
-              background: 'rgba(255,255,255,0.2)',
-              color: 'white',
-              border: '2px solid white',
-              backdropFilter: 'blur(10px)',
-              fontWeight: '700'
-            }}>
-              🤖 Shop with AI
-            </Link>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#3b82f6' }} />
+              <div>
+                <div style={{ height: '10px', width: '80px', background: 'rgba(255,255,255,0.2)', borderRadius: '4px', marginBottom: '5px' }} />
+                <div style={{ height: '8px', width: '50px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px' }} />
+              </div>
+            </div>
+            <div style={{ height: '100px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }} />
           </div>
         </div>
       </div>
 
-      {/* Categories Section */}
-      <div style={{ marginBottom: 'var(--space-3xl)' }}>
-        <h2 style={{
-          fontSize: '2rem',
-          marginBottom: 'var(--space-xl)',
-          color: 'var(--dark)',
-          textAlign: 'center',
-          fontWeight: '700'
-        }}>
-          Shop by Category
-        </h2>
-        <div className="grid grid-4" style={{ gap: 'var(--space-lg)' }}>
-          {categories.map((category, index) => {
-            const Icon = category.icon;
-            return (
-              <Link
-                key={index}
-                href="/shop"
-                className="card"
-                style={{
+      <div className="container">
+        {/* Categories */}
+        <div style={{ marginBottom: '100px' }}>
+          <h2 style={{ fontSize: '2.5rem', marginBottom: '40px', textAlign: 'center' }}>Browse Categories</h2>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '30px'
+          }}>
+            {categories.map((cat, idx) => (
+              <Link href={`/shop?category=${cat.name.toLowerCase()}`} key={idx}>
+                <div className="glass-card" style={{
+                  padding: '40px 20px',
                   textAlign: 'center',
                   cursor: 'pointer',
-                  transition: 'all var(--transition)'
-                }}
-              >
-                <div style={{
-                  width: '80px',
-                  height: '80px',
-                  background: category.color,
-                  borderRadius: 'var(--radius-xl)',
+                  height: '100%',
                   display: 'flex',
+                  flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  margin: '0 auto var(--space-lg)',
-                  transition: 'all var(--transition)'
+                  gap: '20px'
                 }}>
-                  <Icon size={36} color="white" />
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    borderRadius: '50%',
+                    background: cat.color,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 10px 20px rgba(0,0,0,0.2)'
+                  }}>
+                    <cat.icon size={32} color="white" />
+                  </div>
+                  <h3 style={{ fontSize: '1.2rem' }}>{cat.name}</h3>
                 </div>
-                <h3 style={{ fontSize: '1.125rem', fontWeight: '600', color: 'var(--dark)' }}>
-                  {category.name}
-                </h3>
               </Link>
-            );
-          })}
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Featured Products */}
-      <div style={{ marginBottom: 'var(--space-3xl)' }}>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 'var(--space-xl)'
-        }}>
-          <h2 style={{
-            fontSize: '2rem',
-            color: 'var(--dark)',
-            fontWeight: '700',
-            margin: 0
-          }}>
-            Featured Products
-          </h2>
-          <Link href="/shop" style={{
-            color: 'var(--primary)',
-            fontWeight: '600',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 'var(--space-sm)',
-            transition: 'all var(--transition)'
-          }}>
-            View All →
-          </Link>
-        </div>
-        <div className="grid-products">
-          {products.map(product => (
-            <ProductCard key={product._id} product={product} />
-          ))}
-        </div>
-      </div>
+        {/* Featured Products */}
+        <div style={{ marginBottom: '100px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: '40px' }}>
+            <h2 style={{ fontSize: '2.5rem', lineHeight: '1' }}>Trending <br /> <span className="text-gradient">Products</span></h2>
+            <Link href="/shop" className="btn btn-outline btn-sm">View All</Link>
+          </div>
 
-      {/* Benefits Section */}
-      <div style={{
-        background: 'linear-gradient(135deg, var(--gray-lightest) 0%, white 100%)',
-        borderRadius: 'var(--radius-2xl)',
-        padding: 'var(--space-3xl) var(--space-xl)',
-        marginBottom: 'var(--space-3xl)'
-      }}>
-        <h2 style={{
-          fontSize: '2rem',
-          marginBottom: 'var(--space-2xl)',
-          color: 'var(--dark)',
-          textAlign: 'center',
-          fontWeight: '700'
+          <div className="grid-products">
+            {products.map(product => (
+              <ProductCard key={product._id} product={product} />
+            ))}
+          </div>
+        </div>
+
+        {/* Benefits */}
+        <div className="glass" style={{
+          padding: '60px',
+          borderRadius: 'var(--radius-xl)',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '40px'
         }}>
-          Why Choose ZentroMall?
-        </h2>
-        <div className="grid grid-4" style={{ gap: 'var(--space-xl)' }}>
-          {benefits.map((benefit, index) => {
-            const Icon = benefit.icon;
-            return (
-              <div key={index} style={{ textAlign: 'center' }}>
-                <div style={{
-                  width: '70px',
-                  height: '70px',
-                  background: 'var(--gradient-primary)',
-                  borderRadius: 'var(--radius-full)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto var(--space-md)',
-                  boxShadow: 'var(--shadow-glow)'
-                }}>
-                  <Icon size={32} color="white" />
-                </div>
-                <h3 style={{
-                  fontSize: '1.125rem',
-                  fontWeight: '600',
-                  color: 'var(--dark)',
-                  marginBottom: 'var(--space-sm)'
-                }}>
-                  {benefit.title}
-                </h3>
-                <p style={{
-                  fontSize: '0.875rem',
-                  color: 'var(--gray)',
-                  margin: 0
-                }}>
-                  {benefit.desc}
-                </p>
+          {benefits.map((benefit, idx) => (
+            <div key={idx} style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+              <div style={{
+                padding: '15px',
+                background: 'rgba(255,255,255,0.1)',
+                borderRadius: '12px',
+                color: '#ec4899'
+              }}>
+                <benefit.icon size={24} />
               </div>
-            );
-          })}
+              <div>
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '5px', fontWeight: '600' }}>{benefit.title}</h4>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{benefit.desc}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

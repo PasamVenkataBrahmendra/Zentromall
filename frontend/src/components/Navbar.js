@@ -3,182 +3,154 @@
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { FaShoppingCart, FaUser, FaSearch, FaRobot } from 'react-icons/fa';
+import { FaShoppingCart, FaUser, FaSearch, FaBars, FaMagic } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
 
 export default function Navbar() {
     const { user, logout } = useAuth();
     const { cart } = useCart();
-    const [isScrolled, setIsScrolled] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
 
     const cartCount = cart?.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
 
-    // Handle scroll effect
     useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 10);
-        };
-
+        const handleScroll = () => setScrolled(window.scrollY > 20);
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     return (
         <nav style={{
-            background: isScrolled ? 'rgba(255, 255, 255, 0.95)' : 'white',
-            backdropFilter: isScrolled ? 'blur(10px)' : 'none',
-            boxShadow: isScrolled ? 'var(--shadow-md)' : 'var(--shadow-sm)',
-            position: 'sticky',
-            top: 0,
-            zIndex: 100,
-            transition: 'all var(--transition)'
+            position: 'fixed',
+            top: '20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '90%',
+            maxWidth: '1200px',
+            zIndex: 1000,
+            transition: 'all 0.3s ease',
+            padding: '15px 30px',
+            borderRadius: 'var(--radius-full)',
+            background: scrolled ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 255, 255, 0.6)',
+            backdropFilter: 'blur(12px)',
+            border: '1px solid rgba(255, 255, 255, 0.4)',
+            boxShadow: scrolled ? '0 10px 30px rgba(0,0,0,0.1)' : 'none',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
         }}>
-            <div className="container" style={{
+            {/* Logo */}
+            <Link href="/" style={{
+                fontSize: '1.5rem',
+                fontWeight: '800',
+                background: 'var(--gradient-text)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
                 display: 'flex',
-                justifyContent: 'space-between',
                 alignItems: 'center',
-                height: '80px'
+                gap: '8px'
             }}>
-                {/* Logo */}
-                <Link href="/" style={{
-                    fontSize: '1.75rem',
-                    fontWeight: '800',
-                    background: 'var(--gradient-primary)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    transition: 'all var(--transition)',
-                    letterSpacing: '-0.5px'
-                }}>
-                    ZentroMall
-                </Link>
+                <FaMagic size={20} color="#ec4899" />
+                ZentroMall
+            </Link>
 
-                {/* Navigation Links */}
-                <div style={{ display: 'flex', gap: 'var(--space-xl)', alignItems: 'center' }}>
-                    <Link href="/" style={{
-                        fontWeight: 600,
-                        color: 'var(--dark)',
-                        position: 'relative',
-                        padding: '0.5rem 0',
-                        transition: 'all var(--transition)'
-                    }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.color = 'var(--primary)';
+            {/* Links */}
+            <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
+                <Link href="/" style={{ fontWeight: '500', color: 'var(--text-main)' }}>Home</Link>
+                <Link href="/shop" style={{ fontWeight: '500', color: 'var(--text-main)' }}>Shop</Link>
+                <Link href="/ai-shop" style={{
+                    fontWeight: '600',
+                    color: '#ec4899',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5px'
+                }}>
+                    AI Shop
+                </Link>
+            </div>
+
+            {/* Actions */}
+            <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+                <div style={{
+                    background: 'rgba(0,0,0,0.05)',
+                    padding: '8px 16px',
+                    borderRadius: '20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px'
+                }}>
+                    <FaSearch color="var(--text-muted)" />
+                    <input
+                        type="text"
+                        placeholder="Search..."
+                        style={{
+                            background: 'transparent',
+                            border: 'none',
+                            color: 'var(--text-main)',
+                            outline: 'none',
+                            width: '100px'
                         }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.color = 'var(--dark)';
-                        }}>
-                        Home
-                    </Link>
-                    <Link href="/shop" style={{
-                        fontWeight: 600,
-                        color: 'var(--dark)',
-                        position: 'relative',
-                        padding: '0.5rem 0',
-                        transition: 'all var(--transition)'
-                    }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.color = 'var(--primary)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.color = 'var(--dark)';
-                        }}>
-                        Shop
-                    </Link>
-                    <Link href="/ai-shop" style={{
-                        fontWeight: 600,
-                        background: 'var(--gradient-accent)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        position: 'relative',
-                        padding: '0.5rem 0',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        transition: 'all var(--transition)'
-                    }}>
-                        <FaRobot size={18} style={{ color: 'var(--accent)' }} />
-                        AI Shop
-                    </Link>
+                    />
                 </div>
 
-                {/* Right Side Actions */}
-                <div style={{ display: 'flex', gap: 'var(--space-lg)', alignItems: 'center' }}>
-                    {/* Cart */}
-                    <Link href="/cart" style={{
-                        position: 'relative',
-                        padding: '0.5rem',
-                        borderRadius: 'var(--radius-lg)',
-                        transition: 'all var(--transition)',
+                <Link href="/cart" style={{ position: 'relative' }}>
+                    <div style={{
+                        background: 'rgba(0,0,0,0.05)',
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '50%',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
-                    }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'var(--gray-lightest)';
-                            e.currentTarget.style.transform = 'translateY(-2px)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'transparent';
-                            e.currentTarget.style.transform = 'translateY(0)';
+                        justifyContent: 'center',
+                        transition: 'all 0.3s ease',
+                        color: 'var(--text-main)'
+                    }}>
+                        <FaShoppingCart size={18} />
+                    </div>
+                    {cartCount > 0 && (
+                        <span style={{
+                            position: 'absolute',
+                            top: '-5px',
+                            right: '-5px',
+                            background: '#ec4899',
+                            color: 'white',
+                            fontSize: '10px',
+                            fontWeight: 'bold',
+                            width: '18px',
+                            height: '18px',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
                         }}>
-                        <FaShoppingCart size={22} color="var(--dark)" />
-                        {cartCount > 0 && (
-                            <span style={{
-                                position: 'absolute',
-                                top: 0,
-                                right: 0,
-                                background: 'var(--gradient-accent)',
-                                color: 'white',
-                                fontSize: '0.625rem',
-                                fontWeight: '700',
-                                width: '20px',
-                                height: '20px',
-                                borderRadius: 'var(--radius-full)',
+                            {cartCount}
+                        </span>
+                    )}
+                </Link>
+
+                {user ? (
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                        <Link href="/profile">
+                            <div style={{
+                                width: '35px',
+                                height: '35px',
+                                borderRadius: '50%',
+                                background: 'linear-gradient(135deg, #6366f1, #ec4899)',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                border: '2px solid white',
-                                animation: 'pulse 2s infinite'
+                                fontWeight: 'bold',
+                                color: 'white'
                             }}>
-                                {cartCount}
-                            </span>
-                        )}
-                    </Link>
-
-                    {/* User Actions */}
-                    {user ? (
-                        <div style={{ display: 'flex', gap: 'var(--space-md)', alignItems: 'center' }}>
-                            <Link href="/profile" style={{
-                                padding: '0.5rem',
-                                borderRadius: 'var(--radius-lg)',
-                                transition: 'all var(--transition)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                            }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.background = 'var(--gray-lightest)';
-                                    e.currentTarget.style.transform = 'translateY(-2px)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.background = 'transparent';
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                }}>
-                                <FaUser size={20} color="var(--dark)" />
-                            </Link>
-                            <button
-                                onClick={logout}
-                                className="btn btn-outline btn-sm"
-                            >
-                                Logout
-                            </button>
-                        </div>
-                    ) : (
-                        <Link href="/login" className="btn btn-primary btn-sm">
-                            Login
+                                {user.name[0]}
+                            </div>
                         </Link>
-                    )}
-                </div>
+                    </div>
+                ) : (
+                    <Link href="/login" className="btn btn-primary btn-sm">
+                        Login
+                    </Link>
+                )}
             </div>
         </nav>
     );

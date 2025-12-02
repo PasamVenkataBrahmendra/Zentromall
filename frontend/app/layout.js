@@ -2,6 +2,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from '../src/context/AuthContext';
 import { CartProvider } from '../src/context/CartContext';
+import { WishlistProvider } from '../src/context/WishlistContext';
+import { RecentlyViewedProvider } from '../src/context/RecentlyViewedContext';
+import { CheckoutProvider } from '../src/context/CheckoutContext';
 import Navbar from '../src/components/Navbar';
 import Footer from '../src/components/Footer';
 
@@ -26,11 +29,17 @@ export default function RootLayout({ children }) {
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AuthProvider>
           <CartProvider>
-            <Navbar />
-            <main className="container" style={{ padding: '20px 0', minHeight: '80vh' }}>
-              {children}
-            </main>
-            <Footer />
+            <WishlistProvider>
+              <RecentlyViewedProvider>
+                <CheckoutProvider>
+                  <Navbar />
+                  <main className="container" style={{ padding: '20px 0', minHeight: '80vh' }}>
+                    {children}
+                  </main>
+                  <Footer />
+                </CheckoutProvider>
+              </RecentlyViewedProvider>
+            </WishlistProvider>
           </CartProvider>
         </AuthProvider>
       </body>
