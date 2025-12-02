@@ -1,8 +1,11 @@
 'use client';
 
+'use client';
+
 import { useState } from 'react';
 import { useAuth } from '../../src/context/AuthContext';
 import Link from 'next/link';
+import { FaLeaf, FaShieldAlt, FaSmile } from 'react-icons/fa';
 
 export default function Register() {
     const [name, setName] = useState('');
@@ -20,45 +23,76 @@ export default function Register() {
     };
 
     return (
-        <div style={{ maxWidth: '400px', margin: '50px auto', padding: '30px', background: 'white', borderRadius: 'var(--radius)', boxShadow: 'var(--shadow)' }}>
-            <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Register</h2>
-            {error && <div style={{ color: 'red', marginBottom: '10px', textAlign: 'center' }}>{error}</div>}
-            <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: '15px' }}>
-                    <label style={{ display: 'block', marginBottom: '5px' }}>Name</label>
-                    <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }}
-                        required
-                    />
+        <div className="auth-shell">
+            <div className="auth-card">
+                <div className="auth-side">
+                    <p className="badge badge-success" style={{ width: 'fit-content' }}>Create & explore</p>
+                    <h2>Join Project Leaf on ZentroMall</h2>
+                    <p>Showcase sustainable launches, curate storefronts, and reach millions of conscious shoppers.</p>
+                    <div className="auth-benefits">
+                        <div className="auth-benefit">
+                            <FaLeaf size={26} color="#8bc34a" />
+                            <span>Dedicated Project Leaf spotlight</span>
+                        </div>
+                        <div className="auth-benefit">
+                            <FaShieldAlt size={26} color="#4fa6e5" />
+                            <span>Secure seller + buyer profiles</span>
+                        </div>
+                        <div className="auth-benefit">
+                            <FaSmile size={26} color="#ffb703" />
+                            <span>Personalised recos for your fans</span>
+                        </div>
+                    </div>
                 </div>
-                <div style={{ marginBottom: '15px' }}>
-                    <label style={{ display: 'block', marginBottom: '5px' }}>Email</label>
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }}
-                        required
-                    />
+                <div className="auth-form">
+                    <div>
+                        <h3 style={{ marginBottom: '0.5rem' }}>Create your account</h3>
+                        <p style={{ margin: 0, color: 'var(--gray)' }}>One login unlocks shopping, selling and AI concierge.</p>
+                    </div>
+                    {error && <div style={{ color: '#b12704', fontWeight: 600 }}>{error}</div>}
+                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div className="auth-field">
+                            <label>Full name</label>
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder="Aisha Sharma"
+                                required
+                            />
+                        </div>
+                        <div className="auth-field">
+                            <label>Email address</label>
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="you@example.com"
+                                required
+                            />
+                        </div>
+                        <div className="auth-field">
+                            <label>Password</label>
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Create a strong password"
+                                required
+                            />
+                        </div>
+                        <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
+                            Start shopping
+                        </button>
+                    </form>
+                    <div className="auth-alt">
+                        Already have an account?{' '}
+                        <Link href="/login" style={{ color: 'var(--brand-orange)', fontWeight: 600 }}>
+                            Sign in instead
+                        </Link>
+                    </div>
                 </div>
-                <div style={{ marginBottom: '20px' }}>
-                    <label style={{ display: 'block', marginBottom: '5px' }}>Password</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }}
-                        required
-                    />
-                </div>
-                <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>Register</button>
-            </form>
-            <p style={{ marginTop: '15px', textAlign: 'center' }}>
-                Already have an account? <Link href="/login" style={{ color: 'var(--primary)' }}>Login</Link>
-            </p>
+            </div>
         </div>
     );
 }

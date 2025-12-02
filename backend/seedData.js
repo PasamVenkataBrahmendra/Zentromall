@@ -8,12 +8,12 @@ const connectDB = require('./config/db');
 
 // Sample categories
 const categories = [
-    { name: 'Electronics', slug: 'electronics' },
-    { name: 'Fashion', slug: 'fashion' },
-    { name: 'Home & Kitchen', slug: 'home-kitchen' },
-    { name: 'Books', slug: 'books' },
-    { name: 'Sports & Fitness', slug: 'sports-fitness' },
-    { name: 'Beauty & Personal Care', slug: 'beauty-personal-care' }
+    { name: 'Electronics', slug: 'electronics', image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800' },
+    { name: 'Fashion', slug: 'fashion', image: 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=800' },
+    { name: 'Home & Kitchen', slug: 'home-kitchen', image: 'https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=800' },
+    { name: 'Books', slug: 'books', image: 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800' },
+    { name: 'Sports & Fitness', slug: 'sports-fitness', image: 'https://images.unsplash.com/photo-1420310414923-bf3651a89816?w=800' },
+    { name: 'Beauty & Personal Care', slug: 'beauty-personal-care', image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=800' }
 ];
 
 // Sample products - Comprehensive catalog like Amazon/Flipkart
@@ -105,6 +105,215 @@ const products = [
     { title: 'Nail Care Kit Professional', price: 34.99, mrp: 44.99, description: '18-piece set, stainless steel tools, manicure and pedicure, leather case', images: ['https://images.unsplash.com/photo-1610992015732-2449b76344bc?w=500'], category: 'beauty-personal-care', stock: 90, slug: 'nail-care-kit-professional' }
 ];
 
+const marketplaceMeta = {
+    electronics: {
+        brands: ['PulseWave', 'AuroraTech', 'Northwind Labs', 'HyperNova'],
+        highlights: [
+            '1-year manufacturer warranty',
+            'Exchange bonus on old devices',
+            'Partner offers on select bank cards',
+            'Trusted by 50K+ customers'
+        ],
+        specifications: [
+            { label: 'Warranty', value: '12 Months' },
+            { label: 'Fulfilled by', value: 'Zentro Logistics' },
+            { label: 'Country of Origin', value: 'Imported / India' }
+        ],
+        variantOptions: { colors: ['Black', 'Silver', 'Blue'], sizes: [] },
+        tags: ['electronics', 'gadgets', 'tech'],
+        badges: ['Electronics Fest'],
+        returnWindow: 7,
+        shippingCharge: 0
+    },
+    fashion: {
+        brands: ['ModaLane', 'Urban Thread', 'North Republic', 'Essence Co'],
+        highlights: [
+            'Premium quality fabrics',
+            'Easy 15-day returns',
+            'Pay later available',
+            'Free size exchange'
+        ],
+        specifications: [
+            { label: 'Fabric Care', value: 'Machine Wash' },
+            { label: 'Fit', value: 'True to size' }
+        ],
+        variantOptions: { colors: ['Black', 'Olive', 'Sand', 'Navy'], sizes: ['S', 'M', 'L', 'XL'] },
+        tags: ['fashion', 'style', 'clothing'],
+        badges: ['Fresh on Zentro'],
+        returnWindow: 15,
+        shippingCharge: 0
+    },
+    'home-kitchen': {
+        brands: ['CasaCraft', 'HomeLuxe', 'KitchenPro', 'ComfortBay'],
+        highlights: [
+            'Energy efficient design',
+            'Tested for durability',
+            'Extra warranty available',
+            'Free installation on eligible items'
+        ],
+        specifications: [
+            { label: 'Usage', value: 'Household' },
+            { label: 'Warranty', value: '6-24 Months' }
+        ],
+        variantOptions: { colors: ['Steel', 'White', 'Charcoal'], sizes: [] },
+        tags: ['home', 'kitchen', 'appliances'],
+        badges: ['Top Home Pick'],
+        returnWindow: 10,
+        shippingCharge: 0
+    },
+    books: {
+        brands: ['Zentro Press', 'Classic Reads', 'Aurora Publishing'],
+        highlights: [
+            'Author signed bookmark inside',
+            'Eligible for buy 2 get 1',
+            'Ships within 24 hours',
+            'Quality checked packaging'
+        ],
+        specifications: [
+            { label: 'Format', value: 'Paperback / Hardcover' },
+            { label: 'Language', value: 'English' }
+        ],
+        variantOptions: { colors: [], sizes: [] },
+        tags: ['books', 'reading'],
+        badges: ['Editor\'s Pick'],
+        returnWindow: 7,
+        shippingCharge: 0
+    },
+    'sports-fitness': {
+        brands: ['ActiveCore', 'Momentum', 'FitSphere'],
+        highlights: [
+            'Certified for professional use',
+            'Sweat & weather resistant',
+            'EMI starts ₹499/month equivalent',
+            'Complimentary training plan'
+        ],
+        specifications: [
+            { label: 'Ideal For', value: 'Unisex' },
+            { label: 'Usage', value: 'Indoor + Outdoor' }
+        ],
+        variantOptions: { colors: ['Black', 'Grey', 'Teal'], sizes: ['S', 'M', 'L'] },
+        tags: ['fitness', 'sports', 'wellness'],
+        badges: ['Hot Selling'],
+        returnWindow: 10,
+        shippingCharge: 0
+    },
+    'beauty-personal-care': {
+        brands: ['GlowLab', 'PureSkin', 'Aromatique'],
+        highlights: [
+            'Dermatologically tested',
+            'Vegan & cruelty free',
+            'Limited time combo offers',
+            'Free travel pouch included'
+        ],
+        specifications: [
+            { label: 'Skin Type', value: 'All skin types' },
+            { label: 'Shelf Life', value: '24 Months' }
+        ],
+        variantOptions: { colors: [], sizes: [] },
+        tags: ['beauty', 'personal care'],
+        badges: ['Self Care Pick'],
+        returnWindow: 7,
+        shippingCharge: 0
+    }
+};
+
+const defaultMeta = {
+    brands: ['ZentroMall Originals'],
+    highlights: ['Trusted by ZentroMall', 'Secure packaging', 'Easy returns'],
+    specifications: [
+        { label: 'Fulfilled by', value: 'ZentroMall' },
+        { label: 'Customer Care', value: '24x7 Support' }
+    ],
+    variantOptions: { colors: ['Classic'], sizes: [] },
+    tags: ['zentromall'],
+    badges: ['Popular Choice'],
+    returnWindow: 7,
+    shippingCharge: 0
+};
+
+// Create a larger synthetic catalog (e.g. 2000 products) from the base marketplace products
+const generateBulkProducts = (baseProducts, targetCount = 2000) => {
+    const result = [];
+    const total = Math.max(targetCount, baseProducts.length);
+
+    for (let i = 0; i < total; i++) {
+        const template = baseProducts[i % baseProducts.length];
+        const index = i + 1;
+
+        // Slight variations for realism
+        const priceFactor = 0.85 + Math.random() * 0.4; // 0.85–1.25x
+        const basePrice = template.price || 100;
+        const price = Number((basePrice * priceFactor).toFixed(2));
+        const mrpFactor = 1.05 + Math.random() * 0.4; // 1.05–1.45x
+        const mrp = Number((price * mrpFactor).toFixed(2));
+
+        const cloned = {
+            ...template,
+            title: `${template.title} #${index}`,
+            slug: `${template.slug}-${index}`,
+            price,
+            mrp,
+            stock: Math.max(5, Math.floor((template.stock || 50) * (0.4 + Math.random() * 1.6))),
+            // Stagger flags to keep rails populated but varied
+            isFeatured: i % 3 === 0,
+            isBestSeller: i % 9 === 0,
+            isDealOfDay: i % 7 === 0,
+            isNewArrival: i > total - 100
+        };
+
+        result.push(cloned);
+    }
+
+    return result;
+};
+
+const enrichProductForMarketplace = (product, index) => {
+    const meta = marketplaceMeta[product.category] || defaultMeta;
+    const brand = meta.brands[index % meta.brands.length];
+    const rating = Number((Math.random() * 1.2 + 3.8).toFixed(1));
+    const numReviews = Math.floor(Math.random() * 900) + 40;
+    const fastDelivery = Math.random() > 0.4;
+    const badges = new Set(meta.badges);
+
+    if (rating >= 4.5) badges.add('Top Rated');
+    if (fastDelivery) badges.add('Fast Delivery');
+    if (index % 7 === 0) badges.add('Limited Deal');
+
+    const breakdown = {
+        five: Math.floor(numReviews * 0.55),
+        four: Math.floor(numReviews * 0.25),
+        three: Math.floor(numReviews * 0.12),
+        two: Math.floor(numReviews * 0.05),
+        one: 0
+    };
+    breakdown.one = numReviews - (breakdown.five + breakdown.four + breakdown.three + breakdown.two);
+
+    return {
+        ...product,
+        categorySlug: product.category,
+        brand,
+        highlights: meta.highlights.slice(0, 4),
+        specifications: meta.specifications,
+        variantOptions: meta.variantOptions,
+        badges: Array.from(badges),
+        tags: Array.from(new Set([...(product.tags || []), ...meta.tags, ...product.title.toLowerCase().split(' ')])),
+        deliveryInfo: {
+            fastDelivery,
+            cod: true,
+            returnWindow: meta.returnWindow,
+            shippingCharge: meta.shippingCharge,
+            estimatedDays: fastDelivery ? 'Tomorrow' : '2-4 days'
+        },
+        isFeatured: index % 3 === 0,
+        isBestSeller: numReviews > 500,
+        isDealOfDay: index % 5 === 0,
+        isNewArrival: index > products.length - 15,
+        rating,
+        numReviews,
+        ratingBreakdown: breakdown
+    };
+};
+
 const seedDatabase = async () => {
     try {
         await connectDB();
@@ -137,12 +346,26 @@ const seedDatabase = async () => {
             categoryMap[cat.slug] = cat._id;
         });
 
+        // Enrich base products with marketplace meta
+        const marketplaceProducts = products.map(enrichProductForMarketplace);
+
+        // Expand to a larger synthetic catalog (≈2000 products)
+        const expandedMarketplaceProducts = generateBulkProducts(marketplaceProducts, 2000);
+
         // Update products with category IDs and seller ID
-        const productsWithCategories = products.map(product => ({
-            ...product,
-            category: categoryMap[product.category],
-            seller: seller._id
-        }));
+        const productsWithCategories = expandedMarketplaceProducts.map(product => {
+            const categoryId = categoryMap[product.categorySlug];
+            if (!categoryId) {
+                throw new Error(`Missing category for slug ${product.categorySlug}`);
+            }
+
+            const { categorySlug, ...rest } = product;
+            return {
+                ...rest,
+                category: categoryId,
+                seller: seller._id
+            };
+        });
 
         // Insert products
         const createdProducts = await Product.insertMany(productsWithCategories);

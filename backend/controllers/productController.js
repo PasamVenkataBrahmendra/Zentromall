@@ -1,42 +1,285 @@
+const mongoose = require('mongoose');
 const Product = require('../models/Product');
+const Category = require('../models/Category');
 
-// @desc    Fetch all products
+const parseCsvParam = (value = '') => value.split(',').map(item => item.trim()).filter(Boolean);
+
+const resolveCategoryFilter = async (rawCategories) => {
+    if (!rawCategories) return null;
+
+    const tokens = parseCsvParam(rawCategories);
+    if (!tokens.length) return null;
+
+    const ids = tokens.filter(token => mongoose.Types.ObjectId.isValid(token));
+    const slugs = tokens.filter(token => !mongoose.Types.ObjectId.isValid(token));
+
+    if (slugs.length) {
+        const slugMatches = await Category.find({ slug: { $in: slugs } }).select('_id');
+        slugMatches.forEach(doc => ids.push(doc._id));
+    }
+
+    return ids.length ? ids : null;
+};
+
+const buildSortOption = (sortKey = 'relevance') => {
+    const map = {
+        'price-asc': { price: 1 },
+        'price-desc': { price: -1 },
+        'rating': { rating: -1, numReviews: -1 },
+        'newest': { createdAt: -1 },
+        'best-selling': { isBestSeller: -1, numReviews: -1 },
+        'discount': { discount: -1 },
+    };
+    return map[sortKey] || { tagsPriority: -1, createdAt: -1 };
+};
+
+// @desc    Fetch all products with marketplace style filters
 // @route   GET /api/products
 // @access  Public
 const getProducts = async (req, res) => {
     try {
-        const keyword = req.query.keyword
-            ? {
-                title: {
-                    $regex: req.query.keyword,
-                    $options: 'i',
-                },
-            }
-            : {};
+        const {
+            keyword,
+            brand,
+            minPrice,
+            maxPrice,
+            rating,
+            tags,
+            sort,
+            page = 1,
+            limit = 20,
+            fastDelivery,
+            deal,
+            featured
+        } = req.query;
 
-        const products = await Product.find({ ...keyword }).populate('category', 'name');
-        res.json(products);
+        const parsedLimit = Math.min(parseInt(limit, 10) || 20, 50);
+        const parsedPage = Math.max(parseInt(page, 10) || 1, 1);
+        const skip = (parsedPage - 1) * parsedLimit;
+
+        const query = { status: 'active' };
+
+        if (keyword) {
+            const regex = new RegExp(keyword, 'i');
+            query.$or = [
+                { title: regex },
+                { description: regex },
+                { brand: regex },
+                { tags: regex }
+            ];
+        }
+
+        const categoryFilter = await resolveCategoryFilter(req.query.category);
+        if (categoryFilter) {
+            query.category = { $in: categoryFilter };
+        }
+
+        if (brand) {
+            query.brand = { $in: parseCsvParam(brand) };
+        }
+
+        if (minPrice || maxPrice) {
+            query.price = {};
+            if (minPrice) query.price.$gte = Number(minPrice);
+            if (maxPrice) query.price.$lte = Number(maxPrice);
+        }
+
+        if (rating) {
+            query.rating = { $gte: Number(rating) };
+        }
+
+        if (tags) {
+            query.tags = { $in: parseCsvParam(tags) };
+        }
+
+        if (fastDelivery === 'true') {
+            query['deliveryInfo.fastDelivery'] = true;
+        }
+
+        if (deal === 'true') {
+            query.isDealOfDay = true;
+        }
+
+        if (featured === 'true') {
+            query.isFeatured = true;
+        }
+
+        const [products, total] = await Promise.all([
+            Product.find(query)
+                .populate('category', 'name slug')
+                .skip(skip)
+                .limit(parsedLimit)
+                .sort(buildSortOption(sort)),
+            Product.countDocuments(query)
+        ]);
+
+        res.json({
+            products,
+            pagination: {
+                total,
+                page: parsedPage,
+                pages: Math.ceil(total / parsedLimit),
+                limit: parsedLimit
+            },
+            appliedFilters: {
+                keyword: keyword || null,
+                brand: brand ? parseCsvParam(brand) : [],
+                category: categoryFilter,
+                minPrice: minPrice ? Number(minPrice) : null,
+                maxPrice: maxPrice ? Number(maxPrice) : null,
+                rating: rating ? Number(rating) : null
+            }
+        });
     } catch (error) {
+        console.error('getProducts error:', error);
         res.status(500).json({ message: error.message });
     }
 };
 
-// @desc    Fetch single product
+// @desc    Fetch single product with related picks
 // @route   GET /api/products/:slug
 // @access  Public
 const getProductBySlug = async (req, res) => {
     try {
         const product = await Product.findOne({ slug: req.params.slug })
-            .populate('category', 'name')
+            .populate('category', 'name slug')
             .populate({ path: 'seller', select: 'storeName', strictPopulate: false });
 
-        if (product) {
-            res.json(product);
-        } else {
-            res.status(404).json({ message: 'Product not found' });
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
         }
+
+        const related = await Product.find({
+            _id: { $ne: product._id },
+            category: product.category?._id || product.category,
+            status: 'active'
+        })
+            .limit(8)
+            .select('title price slug images rating brand isBestSeller');
+
+        const response = product.toObject();
+        response.relatedProducts = related;
+        res.json(response);
     } catch (error) {
         console.error('Error in getProductBySlug:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Return marketplace featured rails (hero/deals/bestsellers)
+// @route   GET /api/products/collections/featured
+// @access  Public
+const getFeaturedCollections = async (_req, res) => {
+    try {
+        const [dealsOfDay, bestSellers, newArrivals, topRated, curatedCategories] = await Promise.all([
+            Product.find({ isDealOfDay: true, status: 'active' }).limit(12).select('title price mrp discount slug images rating brand badges'),
+            Product.find({ isBestSeller: true, status: 'active' }).limit(12).select('title price slug images rating brand badges numReviews'),
+            Product.find({ status: 'active' }).sort({ createdAt: -1 }).limit(12).select('title price slug images rating brand badges'),
+            Product.find({ rating: { $gte: 4 }, status: 'active' }).limit(12).select('title price slug images rating brand badges'),
+            Category.find({}).limit(8).select('name slug image')
+        ]);
+
+        const heroBanners = [
+            {
+                id: 'electronics',
+                title: 'Mega Electronics Fest',
+                subtitle: 'Laptops, mobiles & accessories starting under $299',
+                ctaLabel: 'Shop Electronics',
+                ctaLink: '/shop?category=electronics',
+                image: 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=1600',
+                accent: '#1e90ff'
+            },
+            {
+                id: 'fashion',
+                title: 'Premium Fashion Deals',
+                subtitle: 'Top brands with extra 20% cashback this weekend',
+                ctaLabel: 'Upgrade Wardrobe',
+                ctaLink: '/shop?category=fashion',
+                image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600',
+                accent: '#ff5f6d'
+            },
+            {
+                id: 'home',
+                title: 'Home & Kitchen Essentials',
+                subtitle: 'Cookware, decor & smart appliances for modern living',
+                ctaLabel: 'Refresh Home',
+                ctaLink: '/shop?category=home-kitchen',
+                image: 'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?w=1600',
+                accent: '#2dd4bf'
+            }
+        ];
+
+        res.json({
+            heroBanners,
+            dealsOfDay,
+            bestSellers,
+            newArrivals,
+            topRated,
+            curatedCategories,
+            trendingSearches: ['Wireless earbuds', 'Air fryer', 'Gaming laptops', 'Fitness bands', 'Robot vacuum']
+        });
+    } catch (error) {
+        console.error('getFeaturedCollections error:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Marketplace filter metadata (categories, brands, price range)
+// @route   GET /api/products/filters/meta
+// @access  Public
+const getProductFiltersMeta = async (_req, res) => {
+    try {
+        const [categories, brands, priceStats] = await Promise.all([
+            Category.find({}).select('name slug image'),
+            Product.distinct('brand', { status: 'active' }),
+            Product.aggregate([
+                { $match: { status: 'active' } },
+                {
+                    $group: {
+                        _id: null,
+                        minPrice: { $min: '$price' },
+                        maxPrice: { $max: '$price' }
+                    }
+                }
+            ])
+        ]);
+
+        const { minPrice = 0, maxPrice = 0 } = priceStats[0] || {};
+
+        res.json({
+            categories,
+            brands: brands.filter(Boolean).sort(),
+            priceRange: { min: Math.floor(minPrice), max: Math.ceil(maxPrice) },
+            ratingBuckets: [4.5, 4, 3],
+            dealFilters: ['fastDelivery', 'bestSeller', 'dealOfDay']
+        });
+    } catch (error) {
+        console.error('getProductFiltersMeta error:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Lightweight search suggestions
+// @route   GET /api/products/search/suggestions
+// @access  Public
+const getSearchSuggestions = async (req, res) => {
+    try {
+        const { q } = req.query;
+        if (!q) {
+            return res.json([]);
+        }
+
+        const regex = new RegExp(q, 'i');
+        const suggestions = await Product.find({
+            status: 'active',
+            $or: [{ title: regex }, { brand: regex }, { tags: regex }]
+        })
+            .limit(8)
+            .select('title slug brand category');
+
+        res.json(suggestions);
+    } catch (error) {
+        console.error('getSearchSuggestions error:', error);
         res.status(500).json({ message: error.message });
     }
 };
@@ -48,7 +291,7 @@ const createProduct = async (req, res) => {
     try {
         const product = new Product({
             ...req.body,
-            seller: req.user.role === 'seller' ? req.user._id : req.body.seller // If seller, use their ID
+            seller: req.user.role === 'seller' ? req.user._id : req.body.seller
         });
 
         const createdProduct = await product.save();
@@ -88,4 +331,13 @@ const getMyProducts = async (req, res) => {
     }
 };
 
-module.exports = { getProducts, getProductBySlug, createProduct, deleteProduct, getMyProducts };
+module.exports = {
+    getProducts,
+    getProductBySlug,
+    getFeaturedCollections,
+    getProductFiltersMeta,
+    getSearchSuggestions,
+    createProduct,
+    deleteProduct,
+    getMyProducts
+};

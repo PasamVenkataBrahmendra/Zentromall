@@ -2,254 +2,91 @@
 
 import { useEffect, useState } from 'react';
 import api from '../src/utils/api';
-import ProductCard from '../src/components/ProductCard';
+import HeroCarousel from '../src/components/HeroCarousel';
+import DealsCarousel from '../src/components/DealsCarousel';
+import ProductRail from '../src/components/ProductRail';
+import CategoryRail from '../src/components/CategoryRail';
+import ProjectLeafShowcase from '../src/components/ProjectLeafShowcase';
+import MarketplaceTiles from '../src/components/MarketplaceTiles';
+import { FALLBACK_COLLECTIONS } from '../src/data/fallbackData';
 import Link from 'next/link';
-import { FaRocket, FaShieldAlt, FaTruck, FaHeadset, FaMobileAlt, FaTshirt, FaHome, FaGamepad } from 'react-icons/fa';
 
 export default function Home() {
-  const [products, setProducts] = useState([]);
+  const [collections, setCollections] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchCollections = async () => {
       try {
-        const { data } = await api.get('/products');
-        setProducts(data.slice(0, 8)); // Show first 8 products
+        const { data } = await api.get('/products/collections/featured');
+        setCollections(data);
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error('Error fetching featured collections:', error);
+        setCollections(FALLBACK_COLLECTIONS);
+        setLoading(false);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchProducts();
+    fetchCollections();
   }, []);
 
-  const categories = [
-    { name: 'Electronics', icon: FaMobileAlt, color: 'var(--gradient-primary)' },
-    { name: 'Fashion', icon: FaTshirt, color: 'var(--gradient-accent)' },
-    { name: 'Home & Living', icon: FaHome, color: 'var(--gradient-success)' },
-    { name: 'Gaming', icon: FaGamepad, color: 'var(--gradient-primary)' }
-  ];
+  if (loading) {
+    return (
+      <div className="card" style={{ textAlign: 'center', padding: 'var(--space-3xl)' }}>
+        Loading curated storefront...
+      </div>
+    );
+  }
 
-  const benefits = [
-    { icon: FaRocket, title: 'Fast Delivery', desc: 'Get your orders delivered in 24-48 hours' },
-    { icon: FaShieldAlt, title: 'Secure Payment', desc: '100% secure payment methods' },
-    { icon: FaTruck, title: 'Free Shipping', desc: 'Free shipping on orders over $50' },
-    { icon: FaHeadset, title: '24/7 Support', desc: 'Dedicated customer support team' }
-  ];
+  if (!collections) return null;
 
   return (
-    <div>
-      {/* Hero Section */}
-      <div style={{
-        background: 'var(--gradient-hero)',
-        borderRadius: 'var(--radius-2xl)',
-        padding: 'var(--space-3xl) var(--space-xl)',
-        color: 'white',
-        marginBottom: 'var(--space-3xl)',
-        textAlign: 'center',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
-        {/* Floating Elements */}
-        <div style={{
-          position: 'absolute',
-          top: '20%',
-          left: '10%',
-          width: '100px',
-          height: '100px',
-          background: 'rgba(255,255,255,0.1)',
-          borderRadius: 'var(--radius-full)',
-          animation: 'float 6s ease-in-out infinite'
-        }} />
-        <div style={{
-          position: 'absolute',
-          bottom: '20%',
-          right: '15%',
-          width: '150px',
-          height: '150px',
-          background: 'rgba(255,255,255,0.1)',
-          borderRadius: 'var(--radius-full)',
-          animation: 'float 8s ease-in-out infinite'
-        }} />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2xl)' }}>
+      <HeroCarousel slides={collections.heroBanners} />
+      <DealsCarousel items={collections.dealsOfDay} />
+      <CategoryRail categories={collections.curatedCategories} />
 
-        <div style={{ position: 'relative', zIndex: 1 }}>
-          <h1 style={{
-            fontSize: '3.5rem',
-            marginBottom: 'var(--space-lg)',
-            fontWeight: '800',
-            letterSpacing: '-1px',
-            textShadow: '0 4px 20px rgba(0,0,0,0.2)'
-          }}>
-            Welcome to ZentroMall
-          </h1>
-          <p style={{
-            fontSize: '1.25rem',
-            marginBottom: 'var(--space-2xl)',
-            opacity: 0.95,
-            maxWidth: '600px',
-            margin: '0 auto var(--space-2xl)'
-          }}>
-            Discover amazing products at unbeatable prices. Shop with AI assistance or browse our curated collections.
-          </p>
-          <div style={{
-            display: 'flex',
-            gap: 'var(--space-lg)',
-            justifyContent: 'center',
-            flexWrap: 'wrap'
-          }}>
-            <Link href="/shop" className="btn btn-lg" style={{
-              background: 'white',
-              color: 'var(--primary)',
-              fontWeight: '700'
-            }}>
-              Shop Now
-            </Link>
-            <Link href="/ai-shop" className="btn btn-lg" style={{
-              background: 'rgba(255,255,255,0.2)',
-              color: 'white',
-              border: '2px solid white',
-              backdropFilter: 'blur(10px)',
-              fontWeight: '700'
-            }}>
-              🤖 Shop with AI
-            </Link>
+      <MarketplaceTiles />
+      <ProductRail
+        title="Bestsellers across India"
+        subtitle="Most loved products this week"
+        products={collections.bestSellers}
+        cta={{ label: 'See all bestsellers', href: '/shop?sort=best-selling' }}
+      />
+      <ProductRail
+        title="New arrivals just for you"
+        subtitle="Fresh drops every morning"
+        products={collections.newArrivals}
+        cta={{ label: 'Browse new launches', href: '/shop?sort=newest' }}
+      />
+      <ProductRail
+        title="Top rated picks"
+        subtitle="Highly reviewed essentials"
+        products={collections.topRated}
+        cta={{ label: 'See all top rated', href: '/shop?rating=4' }}
+      />
+      <ProjectLeafShowcase />
+      <section className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h2 style={{ marginBottom: '0.25rem' }}>Trending searches</h2>
+            <p style={{ margin: 0, color: 'var(--gray)' }}>What other shoppers are looking for</p>
           </div>
+          <Link href="/shop" style={{ color: 'var(--brand-orange)', fontWeight: 600 }}>Explore all</Link>
         </div>
-      </div>
-
-      {/* Categories Section */}
-      <div style={{ marginBottom: 'var(--space-3xl)' }}>
-        <h2 style={{
-          fontSize: '2rem',
-          marginBottom: 'var(--space-xl)',
-          color: 'var(--dark)',
-          textAlign: 'center',
-          fontWeight: '700'
-        }}>
-          Shop by Category
-        </h2>
-        <div className="grid grid-4" style={{ gap: 'var(--space-lg)' }}>
-          {categories.map((category, index) => {
-            const Icon = category.icon;
-            return (
-              <Link
-                key={index}
-                href="/shop"
-                className="card"
-                style={{
-                  textAlign: 'center',
-                  cursor: 'pointer',
-                  transition: 'all var(--transition)'
-                }}
-              >
-                <div style={{
-                  width: '80px',
-                  height: '80px',
-                  background: category.color,
-                  borderRadius: 'var(--radius-xl)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto var(--space-lg)',
-                  transition: 'all var(--transition)'
-                }}>
-                  <Icon size={36} color="white" />
-                </div>
-                <h3 style={{ fontSize: '1.125rem', fontWeight: '600', color: 'var(--dark)' }}>
-                  {category.name}
-                </h3>
-              </Link>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Featured Products */}
-      <div style={{ marginBottom: 'var(--space-3xl)' }}>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 'var(--space-xl)'
-        }}>
-          <h2 style={{
-            fontSize: '2rem',
-            color: 'var(--dark)',
-            fontWeight: '700',
-            margin: 0
-          }}>
-            Featured Products
-          </h2>
-          <Link href="/shop" style={{
-            color: 'var(--primary)',
-            fontWeight: '600',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 'var(--space-sm)',
-            transition: 'all var(--transition)'
-          }}>
-            View All →
-          </Link>
-        </div>
-        <div className="grid-products">
-          {products.map(product => (
-            <ProductCard key={product._id} product={product} />
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+          {collections.trendingSearches.map(term => (
+            <Link
+              key={term}
+              href={`/shop?keyword=${encodeURIComponent(term)}`}
+              className="filter-chip"
+            >
+              {term}
+            </Link>
           ))}
         </div>
-      </div>
-
-      {/* Benefits Section */}
-      <div style={{
-        background: 'linear-gradient(135deg, var(--gray-lightest) 0%, white 100%)',
-        borderRadius: 'var(--radius-2xl)',
-        padding: 'var(--space-3xl) var(--space-xl)',
-        marginBottom: 'var(--space-3xl)'
-      }}>
-        <h2 style={{
-          fontSize: '2rem',
-          marginBottom: 'var(--space-2xl)',
-          color: 'var(--dark)',
-          textAlign: 'center',
-          fontWeight: '700'
-        }}>
-          Why Choose ZentroMall?
-        </h2>
-        <div className="grid grid-4" style={{ gap: 'var(--space-xl)' }}>
-          {benefits.map((benefit, index) => {
-            const Icon = benefit.icon;
-            return (
-              <div key={index} style={{ textAlign: 'center' }}>
-                <div style={{
-                  width: '70px',
-                  height: '70px',
-                  background: 'var(--gradient-primary)',
-                  borderRadius: 'var(--radius-full)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto var(--space-md)',
-                  boxShadow: 'var(--shadow-glow)'
-                }}>
-                  <Icon size={32} color="white" />
-                </div>
-                <h3 style={{
-                  fontSize: '1.125rem',
-                  fontWeight: '600',
-                  color: 'var(--dark)',
-                  marginBottom: 'var(--space-sm)'
-                }}>
-                  {benefit.title}
-                </h3>
-                <p style={{
-                  fontSize: '0.875rem',
-                  color: 'var(--gray)',
-                  margin: 0
-                }}>
-                  {benefit.desc}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      </section>
     </div>
   );
 }
