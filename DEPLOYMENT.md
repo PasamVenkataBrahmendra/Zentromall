@@ -18,6 +18,10 @@ This guide explains how to deploy ZentroMall to free hosting platforms: **Render
     - Add `MONGO_URI`: Your MongoDB connection string.
     - Add `JWT_SECRET`: A strong random string.
     - Add `SMTP_HOST`, `SMTP_EMAIL`, `SMTP_PASSWORD`: For email notifications (optional, defaults to logging if omitted).
+    - **CRITICAL**: Add `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET`.
+        - If you don't have real keys, use dummy values for now:
+        - `RAZORPAY_KEY_ID`: `rzp_test_12345678901234`
+        - `RAZORPAY_KEY_SECRET`: `dummy_secret_12345`
     - `PORT` is automatically handled by Render (usually 10000), but our code uses `process.env.PORT`.
 8.  Click **Create Web Service**.
 
