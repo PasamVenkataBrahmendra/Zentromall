@@ -2,18 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import api from '../src/utils/api';
-import HeroCarousel from '../src/components/HeroCarousel';
-import DealsCarousel from '../src/components/DealsCarousel';
-import ProductRail from '../src/components/ProductRail';
-import CategoryRail from '../src/components/CategoryRail';
-import ProjectLeafShowcase from '../src/components/ProjectLeafShowcase';
-import MarketplaceTiles from '../src/components/MarketplaceTiles';
-import { FALLBACK_COLLECTIONS } from '../src/data/fallbackData';
 import Link from 'next/link';
-<<<<<<< HEAD
 import { FaRocket, FaShieldAlt, FaTruck, FaHeadset, FaMobileAlt, FaTshirt, FaHome, FaGamepad, FaMagic } from 'react-icons/fa';
-=======
->>>>>>> d74150c8c94d3a37aa361654c5eaec6406af0ac1
+import ProductCard from '../src/components/ProductCard';
+import ProductRail from '../src/components/ProductRail';
+import { FALLBACK_COLLECTIONS } from '../src/data/fallbackData';
 
 export default function Home() {
   const [collections, setCollections] = useState(null);
@@ -22,17 +15,11 @@ export default function Home() {
   useEffect(() => {
     const fetchCollections = async () => {
       try {
-<<<<<<< HEAD
-        const { data } = await api.get('/products');
-        setProducts(data); // Show all products
-=======
         const { data } = await api.get('/products/collections/featured');
         setCollections(data);
->>>>>>> d74150c8c94d3a37aa361654c5eaec6406af0ac1
       } catch (error) {
         console.error('Error fetching featured collections:', error);
         setCollections(FALLBACK_COLLECTIONS);
-        setLoading(false);
       } finally {
         setLoading(false);
       }
@@ -40,27 +27,31 @@ export default function Home() {
     fetchCollections();
   }, []);
 
-<<<<<<< HEAD
   const categories = [
     { name: 'Electronics', icon: FaMobileAlt, color: 'linear-gradient(135deg, #3b82f6, #8b5cf6)' },
     { name: 'Fashion', icon: FaTshirt, color: 'linear-gradient(135deg, #ec4899, #f43f5e)' },
     { name: 'Home & Living', icon: FaHome, color: 'linear-gradient(135deg, #10b981, #3b82f6)' },
     { name: 'Gaming', icon: FaGamepad, color: 'linear-gradient(135deg, #f59e0b, #ef4444)' }
   ];
-=======
+
+  const benefits = [
+    { title: 'Fast Delivery', desc: 'Within 24 hours', icon: FaRocket },
+    { title: 'Secure Payment', desc: '100% protected', icon: FaShieldAlt },
+    { title: 'Free Returns', desc: 'Within 30 days', icon: FaTruck },
+    { title: '24/7 Support', desc: 'Always here for you', icon: FaHeadset },
+  ];
+
   if (loading) {
     return (
-      <div className="card" style={{ textAlign: 'center', padding: 'var(--space-3xl)' }}>
-        Loading curated storefront...
+      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="spinner"></div>
       </div>
     );
   }
->>>>>>> d74150c8c94d3a37aa361654c5eaec6406af0ac1
 
   if (!collections) return null;
 
   return (
-<<<<<<< HEAD
     <div style={{ paddingBottom: '100px' }}>
       {/* Hero Section */}
       <div style={{
@@ -128,60 +119,7 @@ export default function Home() {
               <FaMagic /> AI Assistant
             </Link>
           </div>
-
-          {/* Floating Cards (Decorative) */}
-          <div className="glass-card animate-float desktop-only" style={{
-            position: 'absolute',
-            top: '50%',
-            left: '0',
-            transform: 'translateY(-50%)',
-            padding: '20px',
-            width: '200px'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#3b82f6' }} />
-              <div>
-                <div style={{ height: '10px', width: '80px', background: 'rgba(255,255,255,0.2)', borderRadius: '4px', marginBottom: '5px' }} />
-                <div style={{ height: '8px', width: '50px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px' }} />
-              </div>
-            </div>
-            <div style={{ height: '100px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }} />
-=======
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2xl)' }}>
-      <HeroCarousel slides={collections.heroBanners} />
-      <DealsCarousel items={collections.dealsOfDay} />
-      <CategoryRail categories={collections.curatedCategories} />
-
-      <MarketplaceTiles />
-      <ProductRail
-        title="Bestsellers across India"
-        subtitle="Most loved products this week"
-        products={collections.bestSellers}
-        cta={{ label: 'See all bestsellers', href: '/shop?sort=best-selling' }}
-      />
-      <ProductRail
-        title="New arrivals just for you"
-        subtitle="Fresh drops every morning"
-        products={collections.newArrivals}
-        cta={{ label: 'Browse new launches', href: '/shop?sort=newest' }}
-      />
-      <ProductRail
-        title="Top rated picks"
-        subtitle="Highly reviewed essentials"
-        products={collections.topRated}
-        cta={{ label: 'See all top rated', href: '/shop?rating=4' }}
-      />
-      <ProjectLeafShowcase />
-      <section className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <h2 style={{ marginBottom: '0.25rem' }}>Trending searches</h2>
-            <p style={{ margin: 0, color: 'var(--gray)' }}>What other shoppers are looking for</p>
->>>>>>> d74150c8c94d3a37aa361654c5eaec6406af0ac1
-          </div>
-          <Link href="/shop" style={{ color: 'var(--brand-orange)', fontWeight: 600 }}>Explore all</Link>
         </div>
-<<<<<<< HEAD
       </div>
 
       <div className="container">
@@ -225,18 +163,27 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Featured Products */}
+        {/* Featured Products (Using Best Sellers) */}
         <div style={{ marginBottom: '100px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: '40px' }}>
             <h2 style={{ fontSize: '2.5rem', lineHeight: '1' }}>Trending <br /> <span className="text-gradient">Products</span></h2>
-            <Link href="/shop" className="btn btn-outline btn-sm">View All</Link>
+            <Link href="/shop?sort=best-selling" className="btn btn-outline btn-sm">View All</Link>
           </div>
 
           <div className="grid-products">
-            {products.map(product => (
+            {collections.bestSellers?.slice(0, 8).map(product => (
               <ProductCard key={product._id} product={product} />
             ))}
           </div>
+        </div>
+
+        {/* New Arrivals Rail */}
+        <div style={{ marginBottom: '100px' }}>
+          <ProductRail
+            title="New Arrivals"
+            products={collections.newArrivals}
+            cta={{ label: 'See All', href: '/shop?sort=newest' }}
+          />
         </div>
 
         {/* Benefits */}
@@ -265,20 +212,6 @@ export default function Home() {
           ))}
         </div>
       </div>
-=======
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
-          {collections.trendingSearches.map(term => (
-            <Link
-              key={term}
-              href={`/shop?keyword=${encodeURIComponent(term)}`}
-              className="filter-chip"
-            >
-              {term}
-            </Link>
-          ))}
-        </div>
-      </section>
->>>>>>> d74150c8c94d3a37aa361654c5eaec6406af0ac1
     </div>
   );
 }

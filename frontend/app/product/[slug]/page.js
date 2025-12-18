@@ -194,59 +194,58 @@ export default function ProductDetails() {
 
                     {/* The original "Buy Now" button remains, as per instruction's implied structure */}
                     <div style={{ marginTop: 'var(--space-xl)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                    </button>
-                    <button className="btn btn-accent">
-                        Buy Now
-                    </button>
-                    <button
-                        className="btn btn-outline"
-                        onClick={() => addToCompare(product)}
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-                    >
-                        Add to Compare
-                    </button>
-            </div>
+                        <button className="btn btn-accent">
+                            Buy Now
+                        </button>
+                        <button
+                            className="btn btn-outline"
+                            onClick={() => addToCompare(product)}
+                            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                        >
+                            Add to Compare
+                        </button>
+                    </div>
 
-            <div style={{ marginTop: 'var(--space-xl)', display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.9rem' }}>
-                <p style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                    <FaCheckCircle color="#26a541" /> Cash on Delivery available
-                </p>
-                <p style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                    <FaCheckCircle color="#26a541" /> No-cost EMI from $25/mo
-                </p>
-            </div>
-        </aside>
+                    <div style={{ marginTop: 'var(--space-xl)', display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.9rem' }}>
+                        <p style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                            <FaCheckCircle color="#26a541" /> Cash on Delivery available
+                        </p>
+                        <p style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                            <FaCheckCircle color="#26a541" /> No-cost EMI from $25/mo
+                        </p>
+                    </div>
+                </aside>
             </div >
 
-        <section className="card">
-            <h2>Specifications</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginTop: '1rem' }}>
-                {product.specifications?.map(spec => (
-                    <div key={spec.label} style={{ padding: '0.75rem', border: '1px solid var(--gray-lighter)', borderRadius: 'var(--radius)' }}>
-                        <p style={{ margin: 0, color: 'var(--gray)', fontSize: '0.9rem' }}>{spec.label}</p>
-                        <strong>{spec.value}</strong>
-                    </div>
-                ))}
-            </div>
-        </section>
+            <section className="card">
+                <h2>Specifications</h2>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginTop: '1rem' }}>
+                    {product.specifications?.map(spec => (
+                        <div key={spec.label} style={{ padding: '0.75rem', border: '1px solid var(--gray-lighter)', borderRadius: 'var(--radius)' }}>
+                            <p style={{ margin: 0, color: 'var(--gray)', fontSize: '0.9rem' }}>{spec.label}</p>
+                            <strong>{spec.value}</strong>
+                        </div>
+                    ))}
+                </div>
+            </section>
 
-    {
-        product.relatedProducts?.length > 0 && (
-            <ProductRail
-                title="Customers also viewed"
-                products={product.relatedProducts}
-                cta={{ label: 'See more similar items', href: `/shop?category=${product.category?.slug}` }}
-            />
-        )
-    }
+            {
+                product.relatedProducts?.length > 0 && (
+                    <ProductRail
+                        title="Customers also viewed"
+                        products={product.relatedProducts}
+                        cta={{ label: 'See more similar items', href: `/shop?category=${product.category?.slug}` }}
+                    />
+                )
+            }
 
-    {/* Product Reviews */ }
-    { product && <ProductReviews productId={product._id} /> }
+            {/* Product Reviews */}
+            {product && <ProductReviews productId={product._id} />}
 
-    {/* Product Q&A */ }
-    { product && <ProductQA productId={product._id} /> }
+            {/* Product Q&A */}
+            {product && <ProductQA productId={product._id} />}
 
-    { product && <ProductRecommendations productId={product._id} /> }
+            {product && <ProductRecommendations productId={product._id} />}
         </div >
     );
 }
