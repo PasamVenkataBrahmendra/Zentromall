@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import api from '../../src/utils/api';
+import api from '../../../src/utils/api';
 import { useCart } from '../../src/context/CartContext';
 import { FaFire, FaShoppingCart } from 'react-icons/fa';
 
