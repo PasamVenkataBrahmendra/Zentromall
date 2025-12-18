@@ -21,7 +21,47 @@ const createOrder = async (req, res) => {
             paymentStatus: 'pending'
         });
 
+        // Validate and Decrement Stock
+        const Product = require('../models/Product');
+        const bulkOps = [];
+
+        for (const item of cart.items) {
+            const product = await Product.findById(item.product);
+            if (!product) {
+                return res.status(404).json({ message: `Product not found: ${item.product}` });
+            }
+
+            // Check stock
+            // Note: Simple implementation on main stock.
+            // Future compatibility: If variant selected, check variant stock.
+            if (product.stock < item.quantity) {
+                return res.status(400).json({ message: `Insufficient stock for ${product.title}` });
+            }
+
+            // Prepare bulk update to decrement stock
+            // We do this one by one for now to ensure safety, or use bulkWrite for atomic operations
+            product.stock -= item.quantity;
+            await product.save();
+        }
+
         const createdOrder = await order.save();
+
+        // Send Order Confirmation Email
+        try {
+            const { orderConfirmationTemplate } = require('../utils/emailTemplates');
+            const sendEmail = require('../utils/emailService');
+
+            // Populate user name/email for the template if needed, though req.user has it
+            const fullOrder = await Order.findById(createdOrder._id).populate('user', 'name email').populate('items.product');
+
+            await sendEmail({
+                email: req.user.email,
+                subject: `Order Confirmed #${createdOrder._id.toString().slice(-6).toUpperCase()}`,
+                html: orderConfirmationTemplate(fullOrder)
+            });
+        } catch (emailError) {
+            console.error('Order email failed:', emailError);
+        }
 
         // Clear cart
         cart.items = [];
@@ -101,4 +141,26 @@ const getSellerOrders = async (req, res) => {
     }
 };
 
-module.exports = { createOrder, getMyOrders, getAllOrders, updateOrderStatus, getSellerOrders };
+// @desc    Get order by ID
+// @route   GET /api/orders/:id
+// @access  Private
+const getOrderById = async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id).populate('user', 'name email').populate('items.product');
+
+        if (order) {
+            // Check if user owns order or is admin
+            if (order.user._id.toString() !== req.user._id.toString() && !req.user.isAdmin) {
+                return res.status(401).json({ message: 'Not authorized to view this order' });
+            }
+            res.json(order);
+        } else {
+            res.status(404).json({ message: 'Order not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { createOrder, getMyOrders, getAllOrders, updateOrderStatus, getSellerOrders, getOrderById };
+

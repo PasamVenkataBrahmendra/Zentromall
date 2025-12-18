@@ -1,107 +1,133 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { Suspense, useEffect, useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import api from '../../src/utils/api';
 import ProductCard from '../../src/components/ProductCard';
 import FilterSidebar from '../../src/components/FilterSidebar';
-import { FaSearch, FaFilter, FaTimes, FaThLarge, FaList } from 'react-icons/fa';
+import { FaSearch, FaFilter, FaTimes } from 'react-icons/fa';
+import { FALLBACK_PRODUCTS, FALLBACK_META } from '../../src/data/fallbackData';
 
-export default function Shop() {
-    const searchParams = useSearchParams();
-    const router = useRouter();
+const joinParam = (values = []) => values.filter(Boolean).join(',');
 
+function ShopView() {
     const [products, setProducts] = useState([]);
+    const [pagination, setPagination] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showFilters, setShowFilters] = useState(false);
-    const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 });
+    const [meta, setMeta] = useState(null);
+    const [priceDraft, setPriceDraft] = useState([0, 0]);
 
-    // Filter state from URL
-    const [filters, setFilters] = useState({
-        keyword: searchParams.get('keyword') || '',
-        category: searchParams.get('category') || '',
-        minPrice: searchParams.get('minPrice') || '',
-        maxPrice: searchParams.get('maxPrice') || '',
-        brand: searchParams.getAll('brand') || [],
-        rating: searchParams.get('rating') || '',
-        inStock: searchParams.get('inStock') === 'true',
-        sortBy: searchParams.get('sortBy') || 'newest'
-    });
+    const router = useRouter();
+    const searchParams = useSearchParams();
 
+    const appliedCategories = useMemo(
+        () => searchParams.get('category')?.split(',').filter(Boolean) || [],
+        [searchParams]
+    );
+    const appliedBrands = useMemo(
+        () => searchParams.get('brand')?.split(',').filter(Boolean) || [],
+        [searchParams]
+    );
+    const appliedRating = searchParams.get('rating');
+    const minPrice = searchParams.get('minPrice');
+    const maxPrice = searchParams.get('maxPrice');
+
+    // Set price slider bounds when meta or query changes
     useEffect(() => {
+        if (!meta) return;
+        setPriceDraft([
+            Number(minPrice || meta.priceRange.min),
+            Number(maxPrice || meta.priceRange.max),
+        ]);
+    }, [minPrice, maxPrice, meta]);
+
+    // Fetch filter metadata
+    useEffect(() => {
+        const fetchMeta = async () => {
+            try {
+                const { data } = await api.get('/products/filters/meta');
+                setMeta(data);
+            } catch (error) {
+                console.error('Failed to load filter metadata:', error);
+                setMeta(FALLBACK_META);
+            }
+        };
+
+        fetchMeta();
+    }, []);
+
+    // Fetch products with filters
+    useEffect(() => {
+        const fetchProducts = async () => {
+            setLoading(true);
+            try {
+                const params = Object.fromEntries(searchParams.entries());
+                const { data } = await api.get('/products', { params });
+
+                // Support:
+                // 1) data = { products, pagination }
+                // 2) data = [ ...products ]
+                if (Array.isArray(data)) {
+                    setProducts(data);
+                    setPagination({
+                        total: data.length,
+                        page: 1,
+                        pages: 1,
+                        limit: data.length,
+                    });
+                } else {
+                    setProducts(data.products || []);
+                    setPagination(data.pagination || null);
+                }
+            } catch (error) {
+                console.error('Error fetching products:', error);
+                setProducts(FALLBACK_PRODUCTS);
+                setPagination({
+                    total: FALLBACK_PRODUCTS.length,
+                    page: 1,
+                    pages: 1,
+                    limit: FALLBACK_PRODUCTS.length,
+                });
+            } finally {
+                setLoading(false);
+            }
+        };
+
         fetchProducts();
     }, [searchParams]);
 
-    const fetchProducts = async () => {
-        setLoading(true);
-        try {
-            // Build query string
-            const params = new URLSearchParams();
-            Object.entries(filters).forEach(([key, value]) => {
-                if (value && value !== '') {
-                    if (Array.isArray(value)) {
-                        value.forEach(v => params.append(key, v));
-                    } else {
-                        params.append(key, value);
-                    }
-                }
-            });
+    const updateParam = (key, value) => {
+        const params = new URLSearchParams(searchParams.toString());
 
-            const { data } = await api.get(`/products?${params.toString()}`);
-            setProducts(data.products || data);
-            if (data.page) {
-                setPagination({
-                    page: data.page,
-                    pages: data.pages,
-                    total: data.total
-                });
-            }
-        } catch (error) {
-            console.error('Error fetching products:', error);
-        } finally {
-            setLoading(false);
+        if (!value || (Array.isArray(value) && !value.length)) {
+            params.delete(key);
+        } else {
+            params.set(key, Array.isArray(value) ? joinParam(value) : value);
         }
-    };
 
-    const handleFilterChange = (newFilters) => {
-        setFilters(newFilters);
-        updateURL(newFilters);
-    };
-
-    const handleClearFilters = () => {
-        const clearedFilters = {
-            keyword: '',
-            category: '',
-            minPrice: '',
-            maxPrice: '',
-            brand: [],
-            rating: '',
-            inStock: false,
-            sortBy: 'newest'
-        };
-        setFilters(clearedFilters);
-        updateURL(clearedFilters);
-    };
-
-    const updateURL = (newFilters) => {
-        const params = new URLSearchParams();
-        Object.entries(newFilters).forEach(([key, value]) => {
-            if (value && value !== '' && value !== false) {
-                if (Array.isArray(value) && value.length > 0) {
-                    value.forEach(v => params.append(key, v));
-                } else if (!Array.isArray(value)) {
-                    params.append(key, value);
-                }
-            }
-        });
         router.push(`/shop?${params.toString()}`, { scroll: false });
     };
 
-    const handleSortChange = (sortBy) => {
-        const newFilters = { ...filters, sortBy };
-        setFilters(newFilters);
-        updateURL(newFilters);
+    const toggleMultiSelect = (key, value) => {
+        const current = key === 'category' ? appliedCategories : appliedBrands;
+        const next = current.includes(value)
+            ? current.filter((item) => item !== value)
+            : [...current, value];
+        updateParam(key, next);
     };
+
+    const applyPriceFilter = () => {
+        if (!meta) return;
+        updateParam('minPrice', priceDraft[0]);
+        updateParam('maxPrice', priceDraft[1]);
+    };
+
+    const clearFilters = () => {
+        router.push('/shop');
+    };
+
+    const productCount = Array.isArray(products) ? products.length : 0;
 
     return (
         <div className="container" style={{ paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-3xl)' }}>
@@ -115,18 +141,21 @@ export default function Shop() {
                     Shop <span className="text-gradient">All Products</span>
                 </h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>
-                    Discover our curated collection of premium products
+                    {pagination
+                        ? `${pagination.total} products · Page ${pagination.page} of ${pagination.pages}`
+                        : 'Loading...'}
                 </p>
             </div>
 
-            {/* Search Bar */}
+            {/* Search Bar - Re-integrated for cleaner look in the header area */}
             <div style={{
                 marginBottom: 'var(--space-xl)',
                 display: 'flex',
                 gap: 'var(--space-md)',
-                flexWrap: 'wrap'
+                flexWrap: 'wrap',
+                justifyContent: 'center'
             }}>
-                <div style={{ position: 'relative', flex: '1', minWidth: '300px' }}>
+                <div style={{ position: 'relative', flex: '0 1 500px' }}>
                     <FaSearch style={{
                         position: 'absolute',
                         left: '15px',
@@ -137,8 +166,10 @@ export default function Shop() {
                     <input
                         type="text"
                         placeholder="Search products..."
-                        value={filters.keyword}
-                        onChange={(e) => handleFilterChange({ ...filters, keyword: e.target.value })}
+                        defaultValue={searchParams.get('keyword') || ''}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') updateParam('keyword', e.target.value);
+                        }}
                         style={{
                             width: '100%',
                             padding: '12px 12px 12px 45px',
@@ -146,7 +177,6 @@ export default function Shop() {
                             border: '2px solid var(--border-color)',
                             fontSize: '1rem',
                             outline: 'none',
-                            transition: 'all var(--transition-fast)'
                         }}
                     />
                 </div>
@@ -160,112 +190,172 @@ export default function Shop() {
                 </button>
             </div>
 
-            {/* Main Content */}
             <div style={{ display: 'grid', gridTemplateColumns: showFilters ? '280px 1fr' : '1fr', gap: 'var(--space-xl)' }}>
-                {/* Filters Sidebar */}
                 {showFilters && (
-                    <FilterSidebar
-                        filters={filters}
-                        onFilterChange={handleFilterChange}
-                        onClearFilters={handleClearFilters}
-                    />
+                    <aside className="filter-sidebar">
+                        <div className="filter-group">
+                            <h4>Category</h4>
+                            <div>
+                                {meta?.categories?.map((category) => (
+                                    <button
+                                        key={category.slug}
+                                        className={`filter-chip ${appliedCategories.includes(category.slug) ? 'active' : ''
+                                            }`}
+                                        onClick={() => toggleMultiSelect('category', category.slug)}
+                                    >
+                                        {category.name}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="filter-group">
+                            <h4>Brands</h4>
+                            <div>
+                                {meta?.brands?.map((brand) => (
+                                    <button
+                                        key={brand}
+                                        className={`filter-chip ${appliedBrands.includes(brand) ? 'active' : ''
+                                            }`}
+                                        onClick={() => toggleMultiSelect('brand', brand)}
+                                    >
+                                        {brand}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="filter-group">
+                            <h4>Customer Rating</h4>
+                            <div>
+                                {meta?.ratingBuckets?.map((bucket) => (
+                                    <button
+                                        key={bucket}
+                                        className={`filter-chip ${Number(appliedRating) === bucket ? 'active' : ''
+                                            }`}
+                                        onClick={() =>
+                                            updateParam(
+                                                'rating',
+                                                Number(appliedRating) === bucket ? null : bucket
+                                            )
+                                        }
+                                    >
+                                        {bucket}+ Stars
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="filter-group">
+                            <h4>Price</h4>
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    gap: '0.5rem',
+                                    marginBottom: '0.5rem',
+                                }}
+                            >
+                                <input
+                                    type="number"
+                                    value={priceDraft[0]}
+                                    onChange={(e) =>
+                                        setPriceDraft([Number(e.target.value), priceDraft[1]])
+                                    }
+                                    placeholder="Min"
+                                    style={{
+                                        width: '100%',
+                                        padding: '0.5rem',
+                                        borderRadius: 'var(--radius)',
+                                        border: '1px solid var(--gray-lighter)',
+                                    }}
+                                />
+                                <input
+                                    type="number"
+                                    value={priceDraft[1]}
+                                    onChange={(e) =>
+                                        setPriceDraft([priceDraft[0], Number(e.target.value)])
+                                    }
+                                    placeholder="Max"
+                                    style={{
+                                        width: '100%',
+                                        padding: '0.5rem',
+                                        borderRadius: 'var(--radius)',
+                                        border: '1px solid var(--gray-lighter)',
+                                    }}
+                                />
+                            </div>
+                            <button className="btn btn-primary btn-sm" onClick={applyPriceFilter}>
+                                Apply
+                            </button>
+                        </div>
+
+                        <div className="filter-group">
+                            <button className="btn btn-outline btn-sm" onClick={clearFilters} style={{ width: '100%' }}>
+                                Clear all filters
+                            </button>
+                        </div>
+                    </aside>
                 )}
 
-                {/* Products Section */}
-                <div>
-                    {/* Toolbar */}
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: 'var(--space-lg)',
-                        flexWrap: 'wrap',
-                        gap: 'var(--space-md)'
-                    }}>
-                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-                            {pagination.total > 0 ? `Showing ${products.length} of ${pagination.total} products` : 'No products found'}
-                        </p>
-
-                        <select
-                            value={filters.sortBy}
-                            onChange={(e) => handleSortChange(e.target.value)}
-                            style={{
-                                padding: '8px 12px',
-                                borderRadius: 'var(--radius-md)',
-                                border: '1px solid var(--border-color)',
-                                fontSize: '0.875rem',
-                                cursor: 'pointer'
-                            }}
-                        >
-                            <option value="newest">Newest First</option>
-                            <option value="price-asc">Price: Low to High</option>
-                            <option value="price-desc">Price: High to Low</option>
-                            <option value="rating">Top Rated</option>
-                            <option value="discount">Best Discount</option>
-                            <option value="popular">Most Popular</option>
-                        </select>
+                <section style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--space-md)', alignItems: 'center' }}>
+                        <div style={{ color: 'var(--gray)' }}>
+                            Showing <strong>{productCount}</strong> items
+                        </div>
+                        <div style={{ display: 'flex', gap: 'var(--space-md)', alignItems: 'center' }}>
+                            <select
+                                value={searchParams.get('sort') || 'relevance'}
+                                onChange={(e) => updateParam('sort', e.target.value)}
+                                style={{
+                                    padding: '0.5rem 1rem',
+                                    borderRadius: 'var(--radius)',
+                                    border: '1px solid var(--gray-lighter)',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                <option value="relevance">Relevance</option>
+                                <option value="price-asc">Price: Low to High</option>
+                                <option value="price-desc">Price: High to Low</option>
+                                <option value="rating">Customer Reviews</option>
+                                <option value="best-selling">Best Sellers</option>
+                                <option value="discount">Discount</option>
+                                <option value="newest">New Arrivals</option>
+                            </select>
+                        </div>
                     </div>
 
-                    {/* Product Grid */}
                     {loading ? (
                         <div className="grid-products">
-                            {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
-                                <div key={n} style={{
-                                    height: '400px',
-                                    borderRadius: 'var(--radius-xl)',
-                                    background: 'var(--gray-100)',
-                                    animation: 'pulse 1.5s ease-in-out infinite'
-                                }}></div>
-                            ))}
-                        </div>
-                    ) : products.length > 0 ? (
-                        <div className="grid-products">
-                            {products.map(product => (
-                                <ProductCard key={product._id} product={product} />
+                            {[1, 2, 3, 4].map((n) => (
+                                <div key={n} style={{ height: '400px', background: 'var(--gray-100)', borderRadius: 'var(--radius-xl)' }}></div>
                             ))}
                         </div>
                     ) : (
-                        <div style={{
-                            textAlign: 'center',
-                            padding: 'var(--space-3xl) 0',
-                            color: 'var(--text-secondary)'
-                        }}>
-                            <h3 style={{ fontSize: '1.5rem', marginBottom: 'var(--space-md)' }}>
-                                No products found
-                            </h3>
-                            <p>Try adjusting your filters or search terms</p>
-                            <button
-                                className="btn btn-primary"
-                                onClick={handleClearFilters}
-                                style={{ marginTop: 'var(--space-lg)' }}
-                            >
-                                Clear All Filters
-                            </button>
-                        </div>
+                        <>
+                            {productCount === 0 ? (
+                                <div className="card">No products match these filters.</div>
+                            ) : (
+                                <div className="grid-products">
+                                    {products.map((product) => (
+                                        <ProductCard
+                                            key={product._id || product.slug || product.title}
+                                            product={product}
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                        </>
                     )}
-
-                    {/* Pagination */}
-                    {pagination.pages > 1 && (
-                        <div style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            gap: 'var(--space-sm)',
-                            marginTop: 'var(--space-2xl)'
-                        }}>
-                            {Array.from({ length: pagination.pages }, (_, i) => i + 1).map(page => (
-                                <button
-                                    key={page}
-                                    className={page === pagination.page ? 'btn btn-primary' : 'btn btn-outline'}
-                                    onClick={() => handleFilterChange({ ...filters, page })}
-                                    style={{ minWidth: '40px' }}
-                                >
-                                    {page}
-                                </button>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                </section>
             </div>
         </div>
+    );
+}
+
+export default function ShopPage() {
+    return (
+        <Suspense fallback={<div className="container" style={{ padding: '50px' }}>Loading storefront...</div>}>
+            <ShopView />
+        </Suspense>
     );
 }

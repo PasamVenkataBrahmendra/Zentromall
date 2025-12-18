@@ -17,6 +17,7 @@ This guide explains how to deploy ZentroMall to free hosting platforms: **Render
 7.  **Environment Variables**:
     - Add `MONGO_URI`: Your MongoDB connection string.
     - Add `JWT_SECRET`: A strong random string.
+    - Add `SMTP_HOST`, `SMTP_EMAIL`, `SMTP_PASSWORD`: For email notifications (optional, defaults to logging if omitted).
     - `PORT` is automatically handled by Render (usually 10000), but our code uses `process.env.PORT`.
 8.  Click **Create Web Service**.
 

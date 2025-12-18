@@ -3,7 +3,8 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 
 const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
+    const secret = process.env.JWT_SECRET || 'dev-secret-key';
+    return jwt.sign({ id }, secret, {
         expiresIn: '30d',
     });
 };
@@ -31,6 +32,21 @@ const registerUser = async (req, res) => {
         });
 
         if (user) {
+            // Send Welcome Email
+            try {
+                const { welcomeTemplate } = require('../utils/emailTemplates');
+                const sendEmail = require('../utils/emailService');
+
+                await sendEmail({
+                    email: user.email,
+                    subject: 'Welcome to ZentroMall! 🛍️',
+                    html: welcomeTemplate(user.name)
+                });
+            } catch (emailError) {
+                console.error('Email sending failed:', emailError);
+                // Continue execution, don't fail registration
+            }
+
             res.status(201).json({
                 _id: user._id,
                 name: user.name,

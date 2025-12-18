@@ -4,6 +4,7 @@ const productSchema = new mongoose.Schema({
     title: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
     description: { type: String, required: true },
+    brand: { type: String, required: true, default: 'ZentroMall Originals' },
     price: { type: Number, required: true },
     mrp: { type: Number, required: true },
     discount: { type: Number, default: 0 },
@@ -11,38 +12,65 @@ const productSchema = new mongoose.Schema({
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
     seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
 
-    // New fields for filtering
-    brand: { type: String, default: '' },
+    // Images
+    images: [{ type: String }],
 
-    // Product variants (sizes, colors)
+    // Filtering & Search
+    tags: [{ type: String }],
+    tagsPriority: { type: Number, default: 0 },
+
+    // Product variants (sizes, colors) - Hybrid approach
+    // We use 'variants' for specific stock keeping units (SKUs)
     variants: [{
         size: { type: String },
         color: { type: String },
         stock: { type: Number, default: 0 },
         price: { type: Number }
     }],
-
-    // Available sizes and colors for filtering
+    // We maintain these for quick filtering/aggregation
     availableSizes: [{ type: String }],
     availableColors: [{ type: String }],
 
     // Specifications
-    specifications: {
-        type: Map,
-        of: String,
-        default: {}
+    // Using array of objects to preserve order
+    specifications: [{
+        label: String,
+        value: String
+    }],
+    highlights: [{ type: String }],
+
+    // Delivery & Warranty
+    deliveryInfo: {
+        fastDelivery: { type: Boolean, default: false },
+        cod: { type: Boolean, default: true },
+        returnWindow: { type: Number, default: 7 }, // days
+        shippingCharge: { type: Number, default: 0 },
+        estimatedDays: { type: String, default: '2-4 days' }
     },
 
-    images: [{ type: String }],
-    tags: [{ type: String }],
-    rating: { type: Number, default: 0 },
-    numReviews: { type: Number, default: 0 },
+    // Badges & Status
+    badges: [{ type: String }],
+    isFeatured: { type: Boolean, default: false },
+    isBestSeller: { type: Boolean, default: false },
+    isDealOfDay: { type: Boolean, default: false },
+    isNewArrival: { type: Boolean, default: false },
+    isNew: { type: Boolean, default: false }, // standardized alias
     status: { type: String, enum: ['active', 'inactive'], default: 'active' },
 
-    // Additional fields for better filtering
-    isFeatured: { type: Boolean, default: false },
-    isNew: { type: Boolean, default: false },
-    viewCount: { type: Number, default: 0 }
+    // Analytics
+    viewCount: { type: Number, default: 0 },
+
+    // Ratings
+    rating: { type: Number, default: 0 },
+    ratingBreakdown: {
+        five: { type: Number, default: 0 },
+        four: { type: Number, default: 0 },
+        three: { type: Number, default: 0 },
+        two: { type: Number, default: 0 },
+        one: { type: Number, default: 0 },
+    },
+    numReviews: { type: Number, default: 0 }
+
 }, { timestamps: true });
 
 // Calculate discount before saving if not provided
@@ -53,9 +81,9 @@ productSchema.pre('save', function (next) {
     next();
 });
 
-// Indexes for better query performance
+// Indexes for text search and sorting
+productSchema.index({ title: 'text', description: 'text', tags: 'text', brand: 'text' });
 productSchema.index({ category: 1, price: 1 });
-productSchema.index({ brand: 1 });
 productSchema.index({ rating: -1 });
 productSchema.index({ createdAt: -1 });
 productSchema.index({ price: 1 });

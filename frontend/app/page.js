@@ -2,40 +2,65 @@
 
 import { useEffect, useState } from 'react';
 import api from '../src/utils/api';
-import ProductCard from '../src/components/ProductCard';
+import HeroCarousel from '../src/components/HeroCarousel';
+import DealsCarousel from '../src/components/DealsCarousel';
+import ProductRail from '../src/components/ProductRail';
+import CategoryRail from '../src/components/CategoryRail';
+import ProjectLeafShowcase from '../src/components/ProjectLeafShowcase';
+import MarketplaceTiles from '../src/components/MarketplaceTiles';
+import { FALLBACK_COLLECTIONS } from '../src/data/fallbackData';
 import Link from 'next/link';
+<<<<<<< HEAD
 import { FaRocket, FaShieldAlt, FaTruck, FaHeadset, FaMobileAlt, FaTshirt, FaHome, FaGamepad, FaMagic } from 'react-icons/fa';
+=======
+>>>>>>> d74150c8c94d3a37aa361654c5eaec6406af0ac1
 
 export default function Home() {
-  const [products, setProducts] = useState([]);
+  const [collections, setCollections] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchCollections = async () => {
       try {
+<<<<<<< HEAD
         const { data } = await api.get('/products');
         setProducts(data); // Show all products
+=======
+        const { data } = await api.get('/products/collections/featured');
+        setCollections(data);
+>>>>>>> d74150c8c94d3a37aa361654c5eaec6406af0ac1
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error('Error fetching featured collections:', error);
+        setCollections(FALLBACK_COLLECTIONS);
+        setLoading(false);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchProducts();
+    fetchCollections();
   }, []);
 
+<<<<<<< HEAD
   const categories = [
     { name: 'Electronics', icon: FaMobileAlt, color: 'linear-gradient(135deg, #3b82f6, #8b5cf6)' },
     { name: 'Fashion', icon: FaTshirt, color: 'linear-gradient(135deg, #ec4899, #f43f5e)' },
     { name: 'Home & Living', icon: FaHome, color: 'linear-gradient(135deg, #10b981, #3b82f6)' },
     { name: 'Gaming', icon: FaGamepad, color: 'linear-gradient(135deg, #f59e0b, #ef4444)' }
   ];
+=======
+  if (loading) {
+    return (
+      <div className="card" style={{ textAlign: 'center', padding: 'var(--space-3xl)' }}>
+        Loading curated storefront...
+      </div>
+    );
+  }
+>>>>>>> d74150c8c94d3a37aa361654c5eaec6406af0ac1
 
-  const benefits = [
-    { icon: FaRocket, title: 'Fast Delivery', desc: 'Get your orders delivered in 24-48 hours' },
-    { icon: FaShieldAlt, title: 'Secure Payment', desc: '100% secure payment methods' },
-    { icon: FaTruck, title: 'Free Shipping', desc: 'Free shipping on orders over $50' },
-    { icon: FaHeadset, title: '24/7 Support', desc: 'Dedicated customer support team' }
-  ];
+  if (!collections) return null;
 
   return (
+<<<<<<< HEAD
     <div style={{ paddingBottom: '100px' }}>
       {/* Hero Section */}
       <div style={{
@@ -121,8 +146,42 @@ export default function Home() {
               </div>
             </div>
             <div style={{ height: '100px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }} />
+=======
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2xl)' }}>
+      <HeroCarousel slides={collections.heroBanners} />
+      <DealsCarousel items={collections.dealsOfDay} />
+      <CategoryRail categories={collections.curatedCategories} />
+
+      <MarketplaceTiles />
+      <ProductRail
+        title="Bestsellers across India"
+        subtitle="Most loved products this week"
+        products={collections.bestSellers}
+        cta={{ label: 'See all bestsellers', href: '/shop?sort=best-selling' }}
+      />
+      <ProductRail
+        title="New arrivals just for you"
+        subtitle="Fresh drops every morning"
+        products={collections.newArrivals}
+        cta={{ label: 'Browse new launches', href: '/shop?sort=newest' }}
+      />
+      <ProductRail
+        title="Top rated picks"
+        subtitle="Highly reviewed essentials"
+        products={collections.topRated}
+        cta={{ label: 'See all top rated', href: '/shop?rating=4' }}
+      />
+      <ProjectLeafShowcase />
+      <section className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h2 style={{ marginBottom: '0.25rem' }}>Trending searches</h2>
+            <p style={{ margin: 0, color: 'var(--gray)' }}>What other shoppers are looking for</p>
+>>>>>>> d74150c8c94d3a37aa361654c5eaec6406af0ac1
           </div>
+          <Link href="/shop" style={{ color: 'var(--brand-orange)', fontWeight: 600 }}>Explore all</Link>
         </div>
+<<<<<<< HEAD
       </div>
 
       <div className="container">
@@ -206,6 +265,20 @@ export default function Home() {
           ))}
         </div>
       </div>
+=======
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+          {collections.trendingSearches.map(term => (
+            <Link
+              key={term}
+              href={`/shop?keyword=${encodeURIComponent(term)}`}
+              className="filter-chip"
+            >
+              {term}
+            </Link>
+          ))}
+        </div>
+      </section>
+>>>>>>> d74150c8c94d3a37aa361654c5eaec6406af0ac1
     </div>
   );
 }

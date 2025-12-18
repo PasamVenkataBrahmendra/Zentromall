@@ -5,6 +5,7 @@ import { CartProvider } from '../src/context/CartContext';
 import { WishlistProvider } from '../src/context/WishlistContext';
 import { RecentlyViewedProvider } from '../src/context/RecentlyViewedContext';
 import { CheckoutProvider } from '../src/context/CheckoutContext';
+import { ComparisonProvider } from '../src/context/ComparisonContext';
 import Navbar from '../src/components/Navbar';
 import Footer from '../src/components/Footer';
 
@@ -32,11 +33,13 @@ export default function RootLayout({ children }) {
             <WishlistProvider>
               <RecentlyViewedProvider>
                 <CheckoutProvider>
-                  <Navbar />
-                  <main className="container" style={{ padding: '20px 0', minHeight: '80vh' }}>
-                    {children}
-                  </main>
-                  <Footer />
+                  <ComparisonProvider>
+                    <Navbar />
+                    <main className="main-content">
+                      {children}
+                    </main>
+                    <Footer />
+                  </ComparisonProvider>
                 </CheckoutProvider>
               </RecentlyViewedProvider>
             </WishlistProvider>

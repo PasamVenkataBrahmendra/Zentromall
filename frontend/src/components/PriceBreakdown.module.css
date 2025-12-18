@@ -1,0 +1,187 @@
+.container {
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #212121;
+}
+
+.toggleBtn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #2874f0;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.toggleBtn:hover {
+  background: #f0f0f0;
+}
+
+.details {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  font-size: 14px;
+  color: #424242;
+}
+
+.row.discount {
+  color: #22a854;
+}
+
+.label {
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge {
+  background: #22a854;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+.value {
+  font-weight: 600;
+  color: #212121;
+}
+
+.value.free {
+  color: #22a854;
+}
+
+.discount .value {
+  color: #22a854;
+}
+
+.divider {
+  height: 1px;
+  background: #e0e0e0;
+  margin: 8px 0;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0 0 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #212121;
+}
+
+.totalAmount {
+  font-size: 18px;
+  color: #2874f0;
+  font-weight: 700;
+}
+
+.savings {
+  margin-top: 12px;
+  padding: 12px;
+  background: #f0f8e0;
+  border-left: 4px solid #22a854;
+  color: #22a854;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.collapsed {
+  padding: 0;
+}
+
+.collapsed .row {
+  padding: 8px 0;
+}
+
+.minimal {
+  padding: 12px 0;
+}
+
+.minimal .total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #212121;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .container {
+    padding: 12px;
+    margin: 12px 0;
+  }
+
+  .header h3 {
+    font-size: 14px;
+  }
+
+  .row {
+    font-size: 13px;
+    padding: 10px 0;
+  }
+
+  .totalRow {
+    font-size: 14px;
+    padding: 12px 0 0 0;
+  }
+
+  .totalAmount {
+    font-size: 16px;
+  }
+}

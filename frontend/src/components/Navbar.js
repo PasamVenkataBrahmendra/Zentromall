@@ -3,155 +3,153 @@
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { FaShoppingCart, FaUser, FaSearch, FaBars, FaMagic } from 'react-icons/fa';
-import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import {
+    FaShoppingCart,
+    FaRobot,
+    FaMapMarkerAlt,
+    FaChevronDown
+} from 'react-icons/fa';
+import SearchBar from './SearchBar';
+
+const secondaryLinks = [
+    { label: 'Best Sellers', href: '/shop?sort=best-selling' },
+    { label: 'Today\'s Deals', href: '/shop?deal=true' },
+    { label: 'Zentro Fresh', href: '/shop?category=home-kitchen' },
+    { label: 'Electronics', href: '/shop?category=electronics' },
+    { label: 'Fashion', href: '/shop?category=fashion' },
+    { label: 'Customer Service', href: '/profile' },
+    { label: 'Sell on Zentro', href: '/seller' }
+];
 
 export default function Navbar() {
     const { user, logout } = useAuth();
     const { cart } = useCart();
-    const [scrolled, setScrolled] = useState(false);
+    const router = useRouter();
 
     const cartCount = cart?.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
 
-    useEffect(() => {
-        const handleScroll = () => setScrolled(window.scrollY > 20);
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
     return (
-        <nav style={{
-            position: 'fixed',
-            top: '20px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '90%',
-            maxWidth: '1200px',
-            zIndex: 1000,
-            transition: 'all 0.3s ease',
-            padding: '15px 30px',
-            borderRadius: 'var(--radius-full)',
-            background: scrolled ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 255, 255, 0.6)',
-            backdropFilter: 'blur(12px)',
-            border: '1px solid rgba(255, 255, 255, 0.4)',
-            boxShadow: scrolled ? '0 10px 30px rgba(0,0,0,0.1)' : 'none',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-        }}>
-            {/* Logo */}
-            <Link href="/" style={{
-                fontSize: '1.5rem',
-                fontWeight: '800',
-                background: 'var(--gradient-text)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-            }}>
-                <FaMagic size={20} color="#ec4899" />
-                ZentroMall
-            </Link>
-
-            {/* Links */}
-            <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
-                <Link href="/" style={{ fontWeight: '500', color: 'var(--text-main)' }}>Home</Link>
-                <Link href="/shop" style={{ fontWeight: '500', color: 'var(--text-main)' }}>Shop</Link>
-                <Link href="/ai-shop" style={{
-                    fontWeight: '600',
-                    color: '#ec4899',
+        <header style={{ position: 'sticky', top: 0, zIndex: 100 }}>
+            <div style={{ background: 'var(--nav-dark)', color: 'white' }}>
+                <div className="container" style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '5px'
+                    gap: 'var(--space-lg)',
+                    padding: '0.75rem 0'
                 }}>
-                    AI Shop
-                </Link>
-            </div>
-
-            {/* Actions */}
-            <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-                <div style={{
-                    background: 'rgba(0,0,0,0.05)',
-                    padding: '8px 16px',
-                    borderRadius: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px'
-                }}>
-                    <FaSearch color="var(--text-muted)" />
-                    <input
-                        type="text"
-                        placeholder="Search..."
-                        style={{
-                            background: 'transparent',
-                            border: 'none',
-                            color: 'var(--text-main)',
-                            outline: 'none',
-                            width: '100px'
-                        }}
-                    />
-                </div>
-
-                <Link href="/cart" style={{ position: 'relative' }}>
-                    <div style={{
-                        background: 'rgba(0,0,0,0.05)',
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        transition: 'all 0.3s ease',
-                        color: 'var(--text-main)'
+                    {/* Logo */}
+                    <Link href="/" style={{
+                        fontSize: '1.8rem',
+                        fontWeight: 700,
+                        color: 'white',
+                        letterSpacing: -0.5
                     }}>
-                        <FaShoppingCart size={18} />
-                    </div>
-                    {cartCount > 0 && (
-                        <span style={{
-                            position: 'absolute',
-                            top: '-5px',
-                            right: '-5px',
-                            background: '#ec4899',
-                            color: 'white',
-                            fontSize: '10px',
-                            fontWeight: 'bold',
-                            width: '18px',
-                            height: '18px',
-                            borderRadius: '50%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}>
-                            {cartCount}
-                        </span>
-                    )}
-                </Link>
+                        Zentro<span style={{ color: 'var(--brand-orange)' }}>Mall</span>
+                    </Link>
 
-                {user ? (
-                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                        <Link href="/profile">
-                            <div style={{
-                                width: '35px',
-                                height: '35px',
-                                borderRadius: '50%',
-                                background: 'linear-gradient(135deg, #6366f1, #ec4899)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontWeight: 'bold',
-                                color: 'white'
-                            }}>
-                                {user.name[0]}
+                    {/* Location Selection */}
+                    <button style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'white',
+                        textAlign: 'left',
+                        cursor: 'pointer'
+                    }}>
+                        <span style={{ fontSize: '0.75rem', color: '#ccc' }}>Deliver to</span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontWeight: 600 }}>
+                            <FaMapMarkerAlt size={14} color="var(--brand-orange)" />
+                            {user?.address?.city || 'Select Location'}
+                        </span>
+                    </button>
+
+                    {/* Advanced Search Bar */}
+                    <div style={{ flex: 1, margin: '0 var(--space-md)' }}>
+                        <SearchBar />
+                    </div>
+
+                    {/* Right Side Actions */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-lg)' }}>
+                        <Link href="/ai-shop" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'white' }}>
+                            <FaRobot size={18} color="var(--brand-orange)" />
+                            AI Shop
+                        </Link>
+
+                        <Link href="/profile" style={{ color: 'white' }}>
+                            <div style={{ fontSize: '0.75rem' }}>Hello, {user ? user.name.split(' ')[0] : 'sign in'}</div>
+                            <div style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                Account & Lists <FaChevronDown size={12} />
                             </div>
                         </Link>
+
+                        <Link href="/orders" style={{ color: 'white' }}>
+                            <div style={{ fontSize: '0.75rem' }}>Returns</div>
+                            <div style={{ fontWeight: 700 }}>& Orders</div>
+                        </Link>
+
+                        <Link href="/cart" style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '0.35rem', position: 'relative' }}>
+                            <FaShoppingCart size={24} />
+                            <span style={{ fontWeight: 700 }}>Cart</span>
+                            {cartCount > 0 && (
+                                <span style={{
+                                    position: 'absolute',
+                                    top: -8,
+                                    right: -8,
+                                    background: 'var(--brand-orange)',
+                                    color: '#111',
+                                    width: 20,
+                                    height: 20,
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '0.75rem',
+                                    fontWeight: 700
+                                }}>
+                                    {cartCount}
+                                </span>
+                            )}
+                        </Link>
+
+                        {user && (
+                            <button
+                                onClick={logout}
+                                className="btn btn-outline btn-sm"
+                                style={{ borderColor: 'white', color: 'white' }}
+                            >
+                                Logout
+                            </button>
+                        )}
+                        {!user && (
+                            <Link href="/login" className="btn btn-primary btn-sm">
+                                Sign in
+                            </Link>
+                        )}
                     </div>
-                ) : (
-                    <Link href="/login" className="btn btn-primary btn-sm">
-                        Login
-                    </Link>
-                )}
+                </div>
             </div>
-        </nav>
+
+            {/* Secondary Navigation */}
+            <div style={{ background: 'var(--nav-light)', color: 'white', fontSize: '0.95rem' }}>
+                <div className="container" style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 'var(--space-lg)',
+                    padding: '0.5rem 0',
+                    overflowX: 'auto'
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 'bold' }}>
+                        <span style={{ fontSize: '1.2rem' }}>☰</span> All
+                    </div>
+                    {secondaryLinks.map(link => (
+                        <Link key={link.href} href={link.href} style={{ whiteSpace: 'nowrap', color: 'white' }}>
+                            {link.label}
+                        </Link>
+                    ))}
+                </div>
+            </div>
+        </header>
     );
 }

@@ -1,0 +1,65 @@
+.container {
+  padding: 10px 0;
+}
+
+.methods {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.method {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.method input {
+  margin-right: 8px;
+}
+
+.method strong {
+  display: block;
+}
+
+.desc {
+  font-size: 13px;
+  color: #666;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.secondary {
+  background: transparent;
+  color: #333;
+  border: 1px solid #e0e0e0;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.error {
+  background: #ffecec;
+  color: #b00020;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
