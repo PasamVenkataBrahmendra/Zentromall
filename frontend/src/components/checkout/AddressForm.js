@@ -28,18 +28,18 @@ const AddressForm = ({ initialData = {}, onNext, loading }) => {
     <form className={styles.form} onSubmit={handleSubmit}>
       <h3>Shipping Address</h3>
       <div className={styles.row}>
-        <input name="fullName" placeholder="Full Name" value={form.fullName} onChange={handleChange} required />
-        <input name="phone" placeholder="Phone" value={form.phone} onChange={handleChange} required />
+        <input className={styles.input} name="fullName" placeholder="Full Name" value={form.fullName} onChange={handleChange} required />
+        <input className={styles.input} name="phone" placeholder="Phone" value={form.phone} onChange={handleChange} required />
       </div>
-      <input name="addressLine1" placeholder="Address Line 1" value={form.addressLine1} onChange={handleChange} required />
-      <input name="addressLine2" placeholder="Address Line 2" value={form.addressLine2} onChange={handleChange} />
+      <input className={styles.input} name="addressLine1" placeholder="Address Line 1" value={form.addressLine1} onChange={handleChange} required />
+      <input className={styles.input} name="addressLine2" placeholder="Address Line 2" value={form.addressLine2} onChange={handleChange} />
       <div className={styles.row}>
-        <input name="city" placeholder="City" value={form.city} onChange={handleChange} required />
-        <input name="state" placeholder="State" value={form.state} onChange={handleChange} required />
+        <input className={styles.input} name="city" placeholder="City" value={form.city} onChange={handleChange} required />
+        <input className={styles.input} name="state" placeholder="State" value={form.state} onChange={handleChange} required />
       </div>
       <div className={styles.row}>
-        <input name="zipCode" placeholder="Zip Code" value={form.zipCode} onChange={handleChange} required />
-        <input name="country" placeholder="Country" value={form.country} onChange={handleChange} />
+        <input className={styles.input} name="zipCode" placeholder="Zip Code" value={form.zipCode} onChange={handleChange} required />
+        <input className={styles.input} name="country" placeholder="Country" value={form.country} onChange={handleChange} />
       </div>
 
       <div className={styles.actions}>

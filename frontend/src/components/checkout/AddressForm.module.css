@@ -1,5 +1,32 @@
-.form { display:flex; flex-direction:column; gap:12px; }
-.row { display:flex; gap:12px; }
-input { padding:10px; border:1px solid #e0e0e0; border-radius:6px; width:100%; }
-.actions { display:flex; justify-content:flex-end; margin-top:10px; }
-.primary { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white; border:none; padding:10px 16px; border-radius:6px; cursor:pointer; }
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.row {
+    display: flex;
+    gap: 12px;
+}
+
+.input {
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    width: 100%;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
