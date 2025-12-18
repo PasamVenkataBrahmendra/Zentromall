@@ -2,9 +2,6 @@ const mongoose = require('mongoose');
 const Product = require('../models/Product');
 const Category = require('../models/Category');
 
-<<<<<<< HEAD
-// @desc    Fetch all products with filtering and sorting
-=======
 const parseCsvParam = (value = '') => value.split(',').map(item => item.trim()).filter(Boolean);
 
 const resolveCategoryFilter = async (rawCategories) => {
@@ -37,112 +34,13 @@ const buildSortOption = (sortKey = 'relevance') => {
 };
 
 // @desc    Fetch all products with marketplace style filters
->>>>>>> d74150c8c94d3a37aa361654c5eaec6406af0ac1
 // @route   GET /api/products
 // @access  Public
 const getProducts = async (req, res) => {
     try {
         const {
             keyword,
-<<<<<<< HEAD
             category,
-            minPrice,
-            maxPrice,
-            brand,
-            rating,
-            inStock,
-            sortBy,
-            page = 1,
-            limit = 12
-        } = req.query;
-
-        // Build filter object
-        let filter = { status: 'active' };
-
-        // Keyword search
-        if (keyword) {
-            filter.$or = [
-                { title: { $regex: keyword, $options: 'i' } },
-                { description: { $regex: keyword, $options: 'i' } },
-                { tags: { $in: [new RegExp(keyword, 'i')] } }
-            ];
-        }
-
-        // Category filter
-        if (category) {
-            filter.category = category;
-        }
-
-        // Price range filter
-        if (minPrice || maxPrice) {
-            filter.price = {};
-            if (minPrice) filter.price.$gte = Number(minPrice);
-            if (maxPrice) filter.price.$lte = Number(maxPrice);
-        }
-
-        // Brand filter (supports multiple brands)
-        if (brand) {
-            const brands = Array.isArray(brand) ? brand : [brand];
-            filter.brand = { $in: brands };
-        }
-
-        // Rating filter
-        if (rating) {
-            filter.rating = { $gte: Number(rating) };
-        }
-
-        // Stock availability filter
-        if (inStock === 'true') {
-            filter.stock = { $gt: 0 };
-        }
-
-        // Sorting
-        let sort = {};
-        switch (sortBy) {
-            case 'price-asc':
-                sort = { price: 1 };
-                break;
-            case 'price-desc':
-                sort = { price: -1 };
-                break;
-            case 'rating':
-                sort = { rating: -1 };
-                break;
-            case 'newest':
-                sort = { createdAt: -1 };
-                break;
-            case 'discount':
-                sort = { discount: -1 };
-                break;
-            case 'popular':
-                sort = { viewCount: -1, numReviews: -1 };
-                break;
-            default:
-                sort = { createdAt: -1 };
-        }
-
-        // Pagination
-        const skip = (page - 1) * limit;
-
-        // Execute query
-        const products = await Product.find(filter)
-            .populate('category', 'name')
-            .sort(sort)
-            .limit(Number(limit))
-            .skip(skip);
-
-        // Get total count for pagination
-        const total = await Product.countDocuments(filter);
-
-        res.json({
-            products,
-            page: Number(page),
-            pages: Math.ceil(total / limit),
-            total
-        });
-    } catch (error) {
-        console.error('Error in getProducts:', error);
-=======
             brand,
             minPrice,
             maxPrice,
@@ -172,7 +70,7 @@ const getProducts = async (req, res) => {
             ];
         }
 
-        const categoryFilter = await resolveCategoryFilter(req.query.category);
+        const categoryFilter = await resolveCategoryFilter(category);
         if (categoryFilter) {
             query.category = { $in: categoryFilter };
         }
@@ -235,7 +133,6 @@ const getProducts = async (req, res) => {
         });
     } catch (error) {
         console.error('getProducts error:', error);
->>>>>>> d74150c8c94d3a37aa361654c5eaec6406af0ac1
         res.status(500).json({ message: error.message });
     }
 };
@@ -248,15 +145,8 @@ const getProductBySlug = async (req, res) => {
         console.log('Fetching product with slug:', req.params.slug);
 
         const product = await Product.findOne({ slug: req.params.slug })
-<<<<<<< HEAD
-            .populate('category', 'name')
-            .populate({ path: 'seller', select: 'name', strictPopulate: false });
-
-        console.log('Product found:', product ? 'Yes' : 'No');
-=======
             .populate('category', 'name slug')
             .populate({ path: 'seller', select: 'storeName', strictPopulate: false });
->>>>>>> d74150c8c94d3a37aa361654c5eaec6406af0ac1
 
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
@@ -445,7 +335,6 @@ const getMyProducts = async (req, res) => {
     }
 };
 
-<<<<<<< HEAD
 // @desc    Get available filter options
 // @route   GET /api/products/filters
 // @access  Public
@@ -570,8 +459,6 @@ const getRecommendations = async (req, res) => {
     }
 };
 
-module.exports = { getProducts, getProductBySlug, createProduct, deleteProduct, getMyProducts, getFilterOptions, getRecommendations };
-=======
 module.exports = {
     getProducts,
     getProductBySlug,
@@ -580,6 +467,7 @@ module.exports = {
     getSearchSuggestions,
     createProduct,
     deleteProduct,
-    getMyProducts
+    getMyProducts,
+    getFilterOptions,
+    getRecommendations
 };
->>>>>>> d74150c8c94d3a37aa361654c5eaec6406af0ac1
