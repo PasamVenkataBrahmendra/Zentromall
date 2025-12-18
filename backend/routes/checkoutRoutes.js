@@ -7,10 +7,10 @@
 const express = require('express');
 const router = express.Router();
 const checkoutController = require('../controllers/checkoutController');
-const authMiddleware = require('../middleware/authMiddleware');
+const { protect } = require('../middleware/authMiddleware');
 
 // Initialize checkout session
-router.post('/initialize/:userId', authMiddleware, checkoutController.initializeCheckout);
+router.post('/initialize/:userId', protect, checkoutController.initializeCheckout);
 
 // Get checkout session details
 router.get('/:sessionId', checkoutController.getCheckout);
@@ -28,7 +28,7 @@ router.post('/:sessionId/payment', checkoutController.setPaymentMethod);
 router.get('/:sessionId/summary', checkoutController.getOrderSummary);
 
 // Step 5: Complete checkout & create order
-router.post('/:sessionId/complete', authMiddleware, checkoutController.completeCheckout);
+router.post('/:sessionId/complete', protect, checkoutController.completeCheckout);
 
 // Apply coupon
 router.post('/:sessionId/coupon', checkoutController.applyCoupon);
