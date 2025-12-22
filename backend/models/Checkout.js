@@ -25,7 +25,7 @@ const checkoutSchema = new mongoose.Schema(
       unique: true,
       required: true
     },
-    
+
     // Step 1: Shipping Address
     shippingAddress: {
       fullName: String,
@@ -49,7 +49,7 @@ const checkoutSchema = new mongoose.Schema(
         default: 'home'
       }
     },
-    
+
     // Step 2: Shipping Method
     shippingMethod: {
       method: {
@@ -67,7 +67,7 @@ const checkoutSchema = new mongoose.Schema(
       },
       carrier: String // e.g., Fedex, UPS, DHL
     },
-    
+
     // Step 3: Payment Method
     paymentMethod: {
       type: {
@@ -85,23 +85,23 @@ const checkoutSchema = new mongoose.Schema(
         razorpayOrderId: String,
         razorpayPaymentId: String,
         razorpaySignature: String,
-        
+
         // For Stripe
         stripePaymentIntentId: String,
         stripeClientSecret: String,
-        
+
         // For Card
         cardLast4: String,
         cardBrand: String, // Visa, Mastercard, etc.
-        
+
         // For UPI
         upiId: String,
-        
+
         // For Wallet
         walletProvider: String
       }
     },
-    
+
     // Step 4 & 5: Order Summary
     cart: [
       {
@@ -129,7 +129,7 @@ const checkoutSchema = new mongoose.Schema(
         }
       }
     ],
-    
+
     // Pricing Breakdown
     pricing: {
       subtotal: {
@@ -153,7 +153,7 @@ const checkoutSchema = new mongoose.Schema(
         required: true
       }
     },
-    
+
     // Coupon/Promo
     coupon: {
       code: String,
@@ -164,19 +164,19 @@ const checkoutSchema = new mongoose.Schema(
       discountPercentage: Number,
       maxDiscount: Number
     },
-    
+
     // Checkout Progress
     currentStep: {
       type: Number,
       enum: [1, 2, 3, 4, 5],
       default: 1
     },
-    
+
     completedSteps: {
       type: [Number],
       default: []
     },
-    
+
     // Status
     status: {
       type: String,
@@ -194,16 +194,16 @@ const checkoutSchema = new mongoose.Schema(
       default: 'initiated',
       index: true
     },
-    
+
     // Payment Status
     paymentStatus: {
       type: String,
       enum: ['pending', 'processing', 'success', 'failed', 'cancelled', 'refunded'],
       default: 'pending'
     },
-    
+
     // Errors & Retry Info
-    errors: [
+    sessionErrors: [
       {
         step: Number,
         message: String,
@@ -214,38 +214,38 @@ const checkoutSchema = new mongoose.Schema(
         }
       }
     ],
-    
+
     retryCount: {
       type: Number,
       default: 0
     },
-    
+
     lastRetryAt: Date,
-    
+
     // Order Reference (after successful checkout)
     orderId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Order'
     },
-    
+
     // Timestamps
     initiatedAt: {
       type: Date,
       default: Date.now
     },
-    
+
     lastUpdatedAt: {
       type: Date,
       default: Date.now
     },
-    
+
     completedAt: Date,
-    
+
     expiresAt: {
       type: Date,
       default: () => new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
     },
-    
+
     // Additional Info
     notes: String,
     ipAddress: String,
@@ -281,7 +281,7 @@ checkoutSchema.methods.getTotalAmount = function () {
 
 // Method to add error
 checkoutSchema.methods.addError = function (step, message, code) {
-  this.errors.push({
+  this.sessionErrors.push({
     step,
     message,
     code,
@@ -299,7 +299,7 @@ checkoutSchema.methods.markStepComplete = function (step) {
 };
 
 // Method to validate checkout data
-checkoutSchema.methods.validate = function () {
+checkoutSchema.methods.validateCheckoutData = function () {
   const errors = [];
 
   // Step 1: Address validation

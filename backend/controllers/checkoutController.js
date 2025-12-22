@@ -41,7 +41,7 @@ exports.initializeCheckout = async (req, res) => {
 
     // Create checkout session
     const sessionId = crypto.randomBytes(16).toString('hex');
-    
+
     const checkout = new Checkout({
       user: userId,
       sessionId,
@@ -202,7 +202,7 @@ exports.setShippingMethod = async (req, res) => {
     // Check free shipping threshold
     const methodData = shippingMethods[method];
     let cost = methodData.cost;
-    
+
     if (checkout.pricing.subtotal >= 500 && method === 'standard') {
       cost = 0; // Free shipping
     }
@@ -341,11 +341,11 @@ exports.completeCheckout = async (req, res) => {
     }
 
     // Validate all steps completed
-    const validation = checkout.validate();
+    const validation = checkout.validateCheckoutData();
     if (!validation.valid) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         error: 'Checkout validation failed',
-        details: validation.errors 
+        details: validation.errors
       });
     }
 

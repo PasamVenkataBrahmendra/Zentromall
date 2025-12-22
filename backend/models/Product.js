@@ -54,7 +54,7 @@ const productSchema = new mongoose.Schema({
     isBestSeller: { type: Boolean, default: false },
     isDealOfDay: { type: Boolean, default: false },
     isNewArrival: { type: Boolean, default: false },
-    isNew: { type: Boolean, default: false }, // standardized alias
+    isNewlyAdded: { type: Boolean, default: false }, // standardized alias
     status: { type: String, enum: ['active', 'inactive'], default: 'active' },
 
     // Analytics
