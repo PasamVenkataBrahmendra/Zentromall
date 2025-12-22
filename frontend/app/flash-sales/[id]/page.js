@@ -93,7 +93,7 @@ export default function FlashSaleDetails() {
                                 borderRadius: 'var(--radius-md)',
                                 overflow: 'hidden',
                                 cursor: 'pointer'
-                            }} onClick={() => router.push(`/product/${product._id}`)}>
+                            }} onClick={() => router.push(`/product/${product.slug}`)}>
                                 {product.images?.[0] ? (
                                     <img src={product.images[0]} alt={product.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                 ) : (

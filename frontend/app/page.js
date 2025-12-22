@@ -30,7 +30,7 @@ export default function Home() {
   const categories = [
     { name: 'Electronics', icon: FaMobileAlt, color: 'linear-gradient(135deg, #3b82f6, #8b5cf6)' },
     { name: 'Fashion', icon: FaTshirt, color: 'linear-gradient(135deg, #ec4899, #f43f5e)' },
-    { name: 'Home & Living', icon: FaHome, color: 'linear-gradient(135deg, #10b981, #3b82f6)' },
+    { name: 'Home & Kitchen', icon: FaHome, color: 'linear-gradient(135deg, #10b981, #3b82f6)' },
     { name: 'Gaming', icon: FaGamepad, color: 'linear-gradient(135deg, #f59e0b, #ef4444)' }
   ];
 

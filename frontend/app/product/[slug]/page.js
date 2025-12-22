@@ -8,6 +8,7 @@ import { useComparison } from '../../../src/context/ComparisonContext';
 import ProductReviews from '../../../src/components/ProductReviews';
 import ProductQA from '../../../src/components/ProductQA';
 import { useRecentlyViewed } from '../../../src/context/RecentlyViewedContext';
+import { useWishlist } from '../../../src/context/WishlistContext';
 import ProductRecommendations from '../../../src/components/ProductRecommendations';
 import ProductRail from '../../../src/components/ProductRail';
 import { FaCheckCircle } from 'react-icons/fa';
@@ -30,6 +31,7 @@ export default function ProductDetails() {
     const { addToCart } = useCart();
     const { addToRecentlyViewed } = useRecentlyViewed();
     const { addToCompare } = useComparison();
+    const { addToWishlist } = useWishlist();
 
     useEffect(() => {
         const fetchProduct = async () => {

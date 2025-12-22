@@ -30,6 +30,7 @@ export default function AdminLayout({ children }) {
                     <Link href="/admin" className="btn btn-outline" style={{ justifyContent: 'flex-start', border: 'none' }}>Dashboard</Link>
                     <Link href="/admin/products" className="btn btn-outline" style={{ justifyContent: 'flex-start', border: 'none' }}>Products</Link>
                     <Link href="/admin/orders" className="btn btn-outline" style={{ justifyContent: 'flex-start', border: 'none' }}>Orders</Link>
+                    <Link href="/admin/users" className="btn btn-outline" style={{ justifyContent: 'flex-start', border: 'none' }}>Users</Link>
                     <Link href="/" className="btn btn-outline" style={{ justifyContent: 'flex-start', border: 'none', marginTop: '20px', color: 'var(--text-gray)' }}>Back to Shop</Link>
                 </div>
             </div>

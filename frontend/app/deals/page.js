@@ -37,9 +37,8 @@ export default function DailyDealsPage() {
         const fetchDeals = async () => {
             try {
                 // Fetch products that are flagged as deal of the day
-                // Ideally backend has a specific route, but we can filter client side or use search
-                const { data } = await api.get('/products');
-                const dealProducts = data.filter(p => p.isDealOfDay);
+                const { data } = await api.get('/products', { params: { deal: 'true' } });
+                const dealProducts = data.products || data || [];
                 setDeals(dealProducts);
             } catch (error) {
                 console.error('Error fetching deals:', error);
