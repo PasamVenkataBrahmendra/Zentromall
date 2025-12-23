@@ -52,89 +52,157 @@ export default function Home() {
   if (!collections) return null;
 
   return (
-    <div style={{ paddingBottom: '100px' }}>
+    <div style={{ paddingBottom: 'var(--space-24)' }}>
       {/* Hero Section */}
-      <div style={{
+      <section style={{
         position: 'relative',
-        minHeight: '80vh',
+        minHeight: '90vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         overflow: 'hidden',
-        marginTop: '-80px', // Pull behind navbar
-        paddingTop: '80px'
+        padding: 'var(--space-20) 0',
+        background: 'linear-gradient(180deg, rgba(254,111,94,0.03) 0%, rgba(255,255,255,0) 100%)'
       }}>
-        {/* Animated Background Blobs */}
+        {/* Decorative Elements */}
         <div style={{
           position: 'absolute',
-          top: '-20%',
-          left: '-10%',
-          width: '600px',
-          height: '600px',
-          background: 'radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%)',
-          filter: 'blur(60px)',
-          zIndex: -1,
-          animation: 'float 10s ease-in-out infinite'
+          top: '10%',
+          right: '5%',
+          width: '400px',
+          height: '400px',
+          background: 'radial-gradient(circle, rgba(255,127,80,0.15) 0%, transparent 70%)',
+          filter: 'blur(80px)',
+          borderRadius: '50%',
+          animation: 'float-slow 20s ease-in-out infinite'
         }} />
         <div style={{
           position: 'absolute',
-          bottom: '-20%',
-          right: '-10%',
-          width: '700px',
-          height: '700px',
-          background: 'radial-gradient(circle, rgba(236,72,153,0.3) 0%, transparent 70%)',
-          filter: 'blur(60px)',
-          zIndex: -1,
-          animation: 'float 15s ease-in-out infinite reverse'
+          bottom: '15%',
+          left: '10%',
+          width: '350px',
+          height: '350px',
+          background: 'radial-gradient(circle, rgba(0,118,182,0.12) 0%, transparent 70%)',
+          filter: 'blur(80px)',
+          borderRadius: '50%',
+          animation: 'float-slow 25s ease-in-out infinite reverse'
         }} />
 
-        <div className="container" style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
+        <div className="container" style={{ 
+          textAlign: 'center', 
+          position: 'relative', 
+          zIndex: 1,
+          maxWidth: '1000px'
+        }}>
+          {/* Small Badge */}
+          <div style={{ 
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 'var(--space-2)',
+            padding: 'var(--space-2) var(--space-4)',
+            background: 'linear-gradient(135deg, rgba(254,111,94,0.1), rgba(255,127,80,0.1))',
+            border: '1px solid rgba(254,111,94,0.2)',
+            borderRadius: 'var(--radius-full)',
+            marginBottom: 'var(--space-8)',
+            fontSize: 'var(--text-sm)',
+            fontWeight: 600,
+            color: 'var(--primary)'
+          }}>
+            <FaMagic size={14} />
+            <span>AI-Powered Shopping Experience</span>
+          </div>
+
           <h1 style={{
-            fontSize: '5rem',
-            fontWeight: '800',
-            lineHeight: '1.1',
-            marginBottom: 'var(--space-lg)',
-            background: 'var(--gradient-text)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.2))'
+            fontSize: 'var(--text-7xl)',
+            fontWeight: 800,
+            lineHeight: 1.1,
+            marginBottom: 'var(--space-6)',
+            letterSpacing: '-0.03em'
           }}>
-            Future of Shopping <br /> is Here.
+            Shop Smarter,
+            <br />
+            <span style={{
+              background: 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundSize: '200% auto'
+            }}>
+              Live Better
+            </span>
           </h1>
+          
           <p style={{
-            fontSize: '1.5rem',
-            color: 'var(--text-muted)',
-            marginBottom: 'var(--space-xl)',
-            maxWidth: '700px',
-            margin: '0 auto var(--space-xl)'
+            fontSize: 'var(--text-xl)',
+            color: 'var(--text-secondary)',
+            marginBottom: 'var(--space-10)',
+            maxWidth: '650px',
+            margin: '0 auto var(--space-10)',
+            lineHeight: 'var(--leading-relaxed)'
           }}>
-            Experience the next generation of e-commerce with AI-powered recommendations and immersive shopping.
+            Discover premium products curated just for you. Experience seamless shopping with personalized recommendations and exclusive deals.
           </p>
 
-          <div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
-            <Link href="/shop" className="btn btn-primary" style={{ padding: '16px 40px', fontSize: '1.2rem' }}>
-              Start Exploring
+          <div style={{ 
+            display: 'flex', 
+            gap: 'var(--space-4)', 
+            justifyContent: 'center',
+            flexWrap: 'wrap'
+          }}>
+            <Link href="/shop" className="btn btn-primary btn-lg">
+              <FaRocket /> Start Shopping
             </Link>
-            <Link href="/ai-shop" className="btn btn-outline" style={{ padding: '16px 40px', fontSize: '1.2rem' }}>
-              <FaMagic /> AI Assistant
+            <Link href="/ai-shop" className="btn btn-secondary btn-lg">
+              <FaMagic /> Try AI Assistant
             </Link>
           </div>
+
+          {/* Trust Badges */}
+          <div style={{
+            display: 'flex',
+            gap: 'var(--space-8)',
+            justifyContent: 'center',
+            marginTop: 'var(--space-16)',
+            flexWrap: 'wrap'
+          }}>
+            {[
+              { icon: FaShieldAlt, text: 'Secure Payments' },
+              { icon: FaTruck, text: 'Free Delivery' },
+              { icon: FaHeadset, text: '24/7 Support' }
+            ].map((item, idx) => (
+              <div key={idx} style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 'var(--space-2)',
+                color: 'var(--text-secondary)',
+                fontSize: 'var(--text-sm)',
+                fontWeight: 500
+              }}>
+                <item.icon size={18} color="var(--primary)" />
+                <span>{item.text}</span>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
 
       <div className="container">
         {/* Categories */}
-        <div style={{ marginBottom: '100px' }}>
-          <h2 style={{ fontSize: '2.5rem', marginBottom: '40px', textAlign: 'center' }}>Browse Categories</h2>
+        <section style={{ marginBottom: 'var(--space-24)' }}>
+          <div style={{ textAlign: 'center', marginBottom: 'var(--space-12)' }}>
+            <h2 style={{ marginBottom: 'var(--space-3)' }}>Shop by Category</h2>
+            <p style={{ fontSize: 'var(--text-lg)', color: 'var(--text-secondary)' }}>
+              Explore our curated collections
+            </p>
+          </div>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '30px'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gap: 'var(--space-6)'
           }}>
             {categories.map((cat, idx) => (
               <Link href={`/shop?category=${cat.name.toLowerCase()}`} key={idx}>
                 <div className="glass-card" style={{
-                  padding: '40px 20px',
+                  padding: 'var(--space-10) var(--space-6)',
                   textAlign: 'center',
                   cursor: 'pointer',
                   height: '100%',
@@ -142,32 +210,51 @@ export default function Home() {
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '20px'
+                  gap: 'var(--space-4)',
+                  position: 'relative',
+                  overflow: 'hidden'
                 }}>
                   <div style={{
-                    width: '80px',
-                    height: '80px',
-                    borderRadius: '50%',
+                    width: '90px',
+                    height: '90px',
+                    borderRadius: 'var(--radius-2xl)',
                     background: cat.color,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 10px 20px rgba(0,0,0,0.2)'
-                  }}>
-                    <cat.icon size={32} color="white" />
+                    boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+                    transition: 'transform var(--transition-base)'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1) rotate(5deg)'}
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1) rotate(0deg)'}>
+                    <cat.icon size={40} color="white" />
                   </div>
-                  <h3 style={{ fontSize: '1.2rem' }}>{cat.name}</h3>
+                  <h3 style={{ fontSize: 'var(--text-lg)', fontWeight: 600 }}>{cat.name}</h3>
                 </div>
               </Link>
             ))}
           </div>
-        </div>
+        </section>
 
         {/* Featured Products (Using Best Sellers) */}
-        <div style={{ marginBottom: '100px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: '40px' }}>
-            <h2 style={{ fontSize: '2.5rem', lineHeight: '1' }}>Trending <br /> <span className="text-gradient">Products</span></h2>
-            <Link href="/shop?sort=best-selling" className="btn btn-outline btn-sm">View All</Link>
+        <section style={{ marginBottom: 'var(--space-24)' }}>
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            marginBottom: 'var(--space-12)'
+          }}>
+            <div>
+              <h2 style={{ marginBottom: 'var(--space-2)' }}>
+                Trending <span className="text-gradient">Now</span>
+              </h2>
+              <p style={{ fontSize: 'var(--text-lg)', color: 'var(--text-secondary)' }}>
+                Most popular items this week
+              </p>
+            </div>
+            <Link href="/shop?sort=best-selling" className="btn btn-outline btn-sm">
+              View All
+            </Link>
           </div>
 
           <div className="grid-products">
@@ -175,42 +262,77 @@ export default function Home() {
               <ProductCard key={product._id} product={product} />
             ))}
           </div>
-        </div>
+        </section>
 
         {/* New Arrivals Rail */}
-        <div style={{ marginBottom: '100px' }}>
+        <section style={{ marginBottom: 'var(--space-24)' }}>
           <ProductRail
             title="New Arrivals"
+            subtitle="Fresh picks just for you"
             products={collections.newArrivals}
             cta={{ label: 'See All', href: '/shop?sort=newest' }}
           />
-        </div>
+        </section>
 
         {/* Benefits */}
-        <div className="glass" style={{
-          padding: '60px',
-          borderRadius: 'var(--radius-xl)',
+        <section className="glass" style={{
+          padding: 'var(--space-12)',
+          borderRadius: 'var(--radius-2xl)',
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: '40px'
+          gap: 'var(--space-8)'
         }}>
           {benefits.map((benefit, idx) => (
-            <div key={idx} style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+            <div key={idx} style={{ 
+              display: 'flex', 
+              gap: 'var(--space-4)', 
+              alignItems: 'flex-start',
+              padding: 'var(--space-4)',
+              borderRadius: 'var(--radius-lg)',
+              transition: 'all var(--transition-base)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--gray-50)';
+              e.currentTarget.style.transform = 'translateY(-4px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}>
               <div style={{
-                padding: '15px',
-                background: 'rgba(255,255,255,0.1)',
-                borderRadius: '12px',
-                color: '#ec4899'
+                padding: 'var(--space-3)',
+                background: 'linear-gradient(135deg, var(--primary-light), var(--primary))',
+                borderRadius: 'var(--radius-lg)',
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minWidth: '48px',
+                height: '48px',
+                boxShadow: 'var(--shadow-primary)'
               }}>
                 <benefit.icon size={24} />
               </div>
               <div>
-                <h4 style={{ fontSize: '1.1rem', marginBottom: '5px', fontWeight: '600' }}>{benefit.title}</h4>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{benefit.desc}</p>
+                <h4 style={{ 
+                  fontSize: 'var(--text-lg)', 
+                  marginBottom: 'var(--space-1)', 
+                  fontWeight: 600,
+                  color: 'var(--text-primary)'
+                }}>
+                  {benefit.title}
+                </h4>
+                <p style={{ 
+                  color: 'var(--text-secondary)', 
+                  fontSize: 'var(--text-sm)',
+                  lineHeight: 'var(--leading-relaxed)'
+                }}>
+                  {benefit.desc}
+                </p>
               </div>
             </div>
           ))}
-        </div>
+        </section>
       </div>
     </div>
   );

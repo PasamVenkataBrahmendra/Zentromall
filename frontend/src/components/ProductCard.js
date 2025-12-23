@@ -33,19 +33,14 @@ export default function ProductCard({ product }) {
 
     return (
         <article
-            className="glass-card"
+            className="card"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             style={{
-                borderRadius: 'var(--radius-xl)',
-                overflow: 'hidden',
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                position: 'relative',
-                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                transform: isHovered ? 'translateY(-5px)' : 'translateY(0)',
-                boxShadow: isHovered ? 'var(--shadow-lg)' : 'var(--shadow)'
+                position: 'relative'
             }}
         >
             {/* Badges */}
@@ -68,13 +63,14 @@ export default function ProductCard({ product }) {
             {/* Image Container */}
             <Link href={`/product/${product.slug}`} style={{ flex: '0 0 auto' }}>
                 <div style={{
-                    height: '280px',
+                    height: '300px',
                     position: 'relative',
                     overflow: 'hidden',
-                    background: '#f1f5f9',
+                    background: 'var(--gray-100)',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    borderRadius: 'var(--radius-lg)'
                 }}>
                     {product.images?.[0] ? (
                         <img
@@ -92,20 +88,17 @@ export default function ProductCard({ product }) {
                         <div style={{ color: 'var(--text-muted)' }}>No Image</div>
                     )}
 
-                    {/* Overlay with Quick Actions */}
+                    {/* Quick Actions Overlay */}
                     <div style={{
                         position: 'absolute',
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        padding: '20px',
-                        background: 'linear-gradient(to top, rgba(0,0,0,0.4), transparent)',
+                        bottom: 'var(--space-4)',
+                        left: 'var(--space-4)',
+                        right: 'var(--space-4)',
                         display: 'flex',
-                        justifyContent: 'center',
-                        gap: '10px',
+                        gap: 'var(--space-2)',
                         opacity: isHovered ? 1 : 0,
-                        transform: isHovered ? 'translateY(0)' : 'translateY(20px)',
-                        transition: 'all 0.3s ease'
+                        transform: isHovered ? 'translateY(0)' : 'translateY(10px)',
+                        transition: 'all var(--transition-base)'
                     }}>
                         <button
                             onClick={(e) => {
@@ -113,69 +106,116 @@ export default function ProductCard({ product }) {
                                 addToCart(product._id);
                             }}
                             className="btn btn-primary btn-sm"
-                            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                            style={{ 
+                                flex: 1,
+                                boxShadow: 'var(--shadow-lg)'
+                            }}
                         >
-                            <FaShoppingCart /> Add to Cart
+                            <FaShoppingCart size={14} /> Add to Cart
                         </button>
                     </div>
 
-                    {/* Wishlist Button (Always visible on hover) */}
-                    <button style={{
-                        position: 'absolute',
-                        top: '10px',
-                        right: '10px',
-                        background: 'white',
-                        border: 'none',
-                        width: '32px',
-                        height: '32px',
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: '#ec4899',
-                        cursor: 'pointer',
-                        transform: isHovered ? 'scale(1)' : 'scale(0)',
-                        transition: 'transform 0.3s ease 0.1s',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                    }}>
-                        <FaHeart />
+                    {/* Wishlist Button */}
+                    <button 
+                        onClick={(e) => e.preventDefault()}
+                        style={{
+                            position: 'absolute',
+                            top: 'var(--space-3)',
+                            right: 'var(--space-3)',
+                            background: 'white',
+                            border: 'none',
+                            width: '36px',
+                            height: '36px',
+                            borderRadius: 'var(--radius-full)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: 'var(--primary)',
+                            cursor: 'pointer',
+                            opacity: isHovered ? 1 : 0,
+                            transform: isHovered ? 'scale(1)' : 'scale(0.8)',
+                            transition: 'all var(--transition-base)',
+                            boxShadow: 'var(--shadow-md)'
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.background = 'var(--primary)';
+                            e.currentTarget.style.color = 'white';
+                            e.currentTarget.style.transform = 'scale(1.1)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.background = 'white';
+                            e.currentTarget.style.color = 'var(--primary)';
+                            e.currentTarget.style.transform = 'scale(1)';
+                        }}
+                    >
+                        <FaHeart size={16} />
                     </button>
                 </div>
             </Link>
 
             {/* Product Info */}
-            <div style={{ padding: 'var(--space-md)', display: 'flex', flexDirection: 'column', flex: 1, gap: '8px' }}>
+            <div style={{ 
+                padding: 'var(--space-4)', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                flex: 1, 
+                gap: 'var(--space-2)' 
+            }}>
+                {/* Brand and Rating */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    <span style={{ 
+                        fontSize: 'var(--text-xs)', 
+                        color: 'var(--text-tertiary)', 
+                        textTransform: 'uppercase', 
+                        letterSpacing: '0.05em',
+                        fontWeight: 600
+                    }}>
                         {product.brand || product.category?.name}
                     </span>
-                    <div style={{ display: 'flex', gap: 2 }}>{renderStars(rating)}</div>
+                    <div style={{ display: 'flex', gap: 1 }}>{renderStars(rating)}</div>
                 </div>
 
+                {/* Product Title */}
                 <Link href={`/product/${product.slug}`} style={{ flex: 1 }}>
                     <h3 style={{
-                        fontSize: '1rem',
-                        fontWeight: '600',
-                        color: 'var(--text-main)',
+                        fontSize: 'var(--text-base)',
+                        fontWeight: 600,
+                        color: 'var(--text-primary)',
                         margin: 0,
-                        lineHeight: '1.4',
+                        lineHeight: 'var(--leading-snug)',
                         display: '-webkit-box',
                         WebkitLineClamp: 2,
                         WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden'
-                    }}>
+                        overflow: 'hidden',
+                        transition: 'color var(--transition-base)'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary)'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-primary)'}>
                         {product.title}
                     </h3>
                 </Link>
 
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginTop: 'auto' }}>
-                    <span style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--primary)' }}>
+                {/* Price */}
+                <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'baseline', 
+                    gap: 'var(--space-2)', 
+                    marginTop: 'auto' 
+                }}>
+                    <span style={{ 
+                        fontSize: 'var(--text-2xl)', 
+                        fontWeight: 700, 
+                        color: 'var(--text-primary)',
+                        background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent'
+                    }}>
                         ${product.price}
                     </span>
                     {product.mrp > product.price && (
                         <span style={{
-                            fontSize: '0.9rem',
-                            color: 'var(--text-muted)',
+                            fontSize: 'var(--text-sm)',
+                            color: 'var(--text-tertiary)',
                             textDecoration: 'line-through'
                         }}>
                             ${product.mrp}
@@ -183,10 +223,20 @@ export default function ProductCard({ product }) {
                     )}
                 </div>
 
+                {/* Highlights */}
                 {product.highlights?.length > 0 && (
-                    <div style={{ fontSize: '0.8rem', color: 'var(--gray)' }}>
+                    <p style={{ 
+                        fontSize: 'var(--text-sm)', 
+                        color: 'var(--text-secondary)',
+                        lineHeight: 'var(--leading-snug)',
+                        margin: 0,
+                        display: '-webkit-box',
+                        WebkitLineClamp: 1,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden'
+                    }}>
                         {product.highlights[0]}
-                    </div>
+                    </p>
                 )}
             </div>
         </article>

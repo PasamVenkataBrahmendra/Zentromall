@@ -6,137 +6,107 @@ import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaEnvelope } from 'reac
 export default function Footer() {
     return (
         <footer style={{
-            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+            background: 'var(--gray-900)',
             color: 'white',
-            marginTop: 'var(--space-3xl)',
-            padding: 'var(--space-3xl) 0 var(--space-lg) 0'
+            marginTop: 'var(--space-24)',
+            padding: 'var(--space-20) 0 var(--space-8) 0',
+            position: 'relative',
+            overflow: 'hidden'
         }}>
-            <div className="container">
-                <div className="grid grid-4" style={{ marginBottom: 'var(--space-2xl)' }}>
+            {/* Decorative Background */}
+            <div style={{
+                position: 'absolute',
+                top: '-50%',
+                right: '-10%',
+                width: '600px',
+                height: '600px',
+                background: 'radial-gradient(circle, rgba(254,111,94,0.1) 0%, transparent 70%)',
+                borderRadius: '50%',
+                pointerEvents: 'none'
+            }} />
+            <div className="container" style={{ position: 'relative' }}>
+                <div className="grid-4" style={{ marginBottom: 'var(--space-16)', gap: 'var(--space-12)' }}>
                     {/* Company Info */}
                     <div>
                         <h3 style={{
-                            fontSize: '1.5rem',
-                            marginBottom: 'var(--space-lg)',
-                            background: 'var(--gradient-primary)',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            fontWeight: 'bold'
+                            fontSize: 'var(--text-2xl)',
+                            marginBottom: 'var(--space-4)',
+                            fontFamily: 'Syne, sans-serif',
+                            fontWeight: 800
                         }}>
-                            ZentroMall
+                            Zentro<span style={{
+                                background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent'
+                            }}>Mall</span>
                         </h3>
-                        <p style={{ color: '#cbd5e1', marginBottom: 'var(--space-md)', lineHeight: '1.6' }}>
+                        <p style={{ 
+                            color: 'var(--gray-400)', 
+                            marginBottom: 'var(--space-6)', 
+                            lineHeight: 'var(--leading-relaxed)',
+                            fontSize: 'var(--text-sm)'
+                        }}>
                             Your one-stop destination for premium products at unbeatable prices. Shop with confidence.
                         </p>
-                        <div style={{ display: 'flex', gap: 'var(--space-md)', marginTop: 'var(--space-lg)' }}>
-                            <a href="#" style={{
-                                color: 'white',
-                                transition: 'all var(--transition)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                width: '40px',
-                                height: '40px',
-                                borderRadius: 'var(--radius-full)',
-                                background: 'rgba(255,255,255,0.1)'
-                            }}
+                        <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
+                            {[FaFacebook, FaTwitter, FaInstagram, FaLinkedin].map((Icon, idx) => (
+                                <a key={idx} href="#" style={{
+                                    color: 'var(--gray-400)',
+                                    transition: 'all var(--transition-base)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    width: '44px',
+                                    height: '44px',
+                                    borderRadius: 'var(--radius-full)',
+                                    background: 'var(--gray-800)',
+                                    border: '1px solid var(--gray-700)'
+                                }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.background = 'var(--gradient-primary)';
-                                    e.currentTarget.style.transform = 'translateY(-3px)';
+                                    e.currentTarget.style.background = 'linear-gradient(135deg, var(--primary), var(--secondary))';
+                                    e.currentTarget.style.color = 'white';
+                                    e.currentTarget.style.borderColor = 'transparent';
+                                    e.currentTarget.style.transform = 'translateY(-4px)';
                                 }}
                                 onMouseLeave={(e) => {
-                                    e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                                    e.currentTarget.style.background = 'var(--gray-800)';
+                                    e.currentTarget.style.color = 'var(--gray-400)';
+                                    e.currentTarget.style.borderColor = 'var(--gray-700)';
                                     e.currentTarget.style.transform = 'translateY(0)';
                                 }}>
-                                <FaFacebook size={20} />
-                            </a>
-                            <a href="#" style={{
-                                color: 'white',
-                                transition: 'all var(--transition)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                width: '40px',
-                                height: '40px',
-                                borderRadius: 'var(--radius-full)',
-                                background: 'rgba(255,255,255,0.1)'
-                            }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.background = 'var(--gradient-primary)';
-                                    e.currentTarget.style.transform = 'translateY(-3px)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                }}>
-                                <FaTwitter size={20} />
-                            </a>
-                            <a href="#" style={{
-                                color: 'white',
-                                transition: 'all var(--transition)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                width: '40px',
-                                height: '40px',
-                                borderRadius: 'var(--radius-full)',
-                                background: 'rgba(255,255,255,0.1)'
-                            }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.background = 'var(--gradient-primary)';
-                                    e.currentTarget.style.transform = 'translateY(-3px)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                }}>
-                                <FaInstagram size={20} />
-                            </a>
-                            <a href="#" style={{
-                                color: 'white',
-                                transition: 'all var(--transition)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                width: '40px',
-                                height: '40px',
-                                borderRadius: 'var(--radius-full)',
-                                background: 'rgba(255,255,255,0.1)'
-                            }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.background = 'var(--gradient-primary)';
-                                    e.currentTarget.style.transform = 'translateY(-3px)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                }}>
-                                <FaLinkedin size={20} />
-                            </a>
+                                    <Icon size={18} />
+                                </a>
+                            ))}
                         </div>
                     </div>
 
                     {/* Quick Links */}
                     <div>
-                        <h4 style={{ fontSize: '1.125rem', marginBottom: 'var(--space-lg)', fontWeight: '600' }}>
+                        <h4 style={{ 
+                            fontSize: 'var(--text-lg)', 
+                            marginBottom: 'var(--space-4)', 
+                            fontWeight: 600,
+                            color: 'white'
+                        }}>
                             Quick Links
                         </h4>
                         <ul style={{ listStyle: 'none', padding: 0 }}>
                             {['Home', 'Shop', 'AI Shop', 'About Us', 'Contact'].map(item => (
-                                <li key={item} style={{ marginBottom: 'var(--space-sm)' }}>
+                                <li key={item} style={{ marginBottom: 'var(--space-3)' }}>
                                     <Link href={`/${item.toLowerCase().replace(' ', '-')}`} style={{
-                                        color: '#cbd5e1',
-                                        transition: 'all var(--transition)',
-                                        display: 'inline-block'
+                                        color: 'var(--gray-400)',
+                                        transition: 'all var(--transition-base)',
+                                        display: 'inline-block',
+                                        fontSize: 'var(--text-sm)'
                                     }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.color = 'white';
-                                            e.currentTarget.style.transform = 'translateX(5px)';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.color = '#cbd5e1';
-                                            e.currentTarget.style.transform = 'translateX(0)';
-                                        }}>
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.color = 'white';
+                                        e.currentTarget.style.transform = 'translateX(4px)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.color = 'var(--gray-400)';
+                                        e.currentTarget.style.transform = 'translateX(0)';
+                                    }}>
                                         {item}
                                     </Link>
                                 </li>
@@ -174,45 +144,40 @@ export default function Footer() {
 
                     {/* Newsletter */}
                     <div>
-                        <h4 style={{ fontSize: '1.125rem', marginBottom: 'var(--space-lg)', fontWeight: '600' }}>
+                        <h4 style={{ 
+                            fontSize: 'var(--text-lg)', 
+                            marginBottom: 'var(--space-4)', 
+                            fontWeight: 600,
+                            color: 'white'
+                        }}>
                             Newsletter
                         </h4>
-                        <p style={{ color: '#cbd5e1', marginBottom: 'var(--space-md)', fontSize: '0.875rem' }}>
+                        <p style={{ 
+                            color: 'var(--gray-400)', 
+                            marginBottom: 'var(--space-4)', 
+                            fontSize: 'var(--text-sm)',
+                            lineHeight: 'var(--leading-relaxed)'
+                        }}>
                             Subscribe to get special offers and updates.
                         </p>
-                        <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
+                        <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
                             <input
                                 type="email"
                                 placeholder="Your email"
                                 style={{
                                     flex: 1,
-                                    padding: '0.75rem',
+                                    padding: 'var(--space-3)',
                                     borderRadius: 'var(--radius-lg)',
-                                    border: '1px solid rgba(255,255,255,0.2)',
-                                    background: 'rgba(255,255,255,0.1)',
+                                    border: '1px solid var(--gray-700)',
+                                    background: 'var(--gray-800)',
                                     color: 'white',
-                                    fontSize: '0.875rem'
+                                    fontSize: 'var(--text-sm)'
                                 }}
                             />
-                            <button style={{
-                                padding: '0.75rem 1.25rem',
-                                background: 'var(--gradient-primary)',
-                                border: 'none',
-                                borderRadius: 'var(--radius-lg)',
-                                color: 'white',
-                                fontWeight: '600',
-                                cursor: 'pointer',
-                                transition: 'all var(--transition)'
-                            }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(-2px)';
-                                    e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.boxShadow = 'none';
-                                }}>
-                                <FaEnvelope />
+                            <button className="btn btn-primary" style={{
+                                padding: 'var(--space-3) var(--space-4)'
+                            }}>
+                                <FaEnvelope size={16} />
                             </button>
                         </div>
                     </div>
@@ -220,27 +185,38 @@ export default function Footer() {
 
                 {/* Bottom Bar */}
                 <div style={{
-                    borderTop: '1px solid rgba(255,255,255,0.1)',
-                    paddingTop: 'var(--space-lg)',
+                    borderTop: '1px solid var(--gray-800)',
+                    paddingTop: 'var(--space-8)',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     flexWrap: 'wrap',
-                    gap: 'var(--space-md)'
+                    gap: 'var(--space-6)'
                 }}>
-                    <p style={{ color: '#94a3b8', fontSize: '0.875rem', margin: 0 }}>
+                    <p style={{ 
+                        color: 'var(--gray-500)', 
+                        fontSize: 'var(--text-sm)', 
+                        margin: 0 
+                    }}>
                         © 2025 ZentroMall. All rights reserved.
                     </p>
-                    <div style={{ display: 'flex', gap: 'var(--space-lg)', alignItems: 'center' }}>
-                        <span style={{ color: '#94a3b8', fontSize: '0.875rem' }}>We Accept:</span>
-                        <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
+                    <div style={{ display: 'flex', gap: 'var(--space-8)', alignItems: 'center', flexWrap: 'wrap' }}>
+                        <span style={{ 
+                            color: 'var(--gray-500)', 
+                            fontSize: 'var(--text-sm)' 
+                        }}>
+                            We Accept:
+                        </span>
+                        <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
                             {['Visa', 'Mastercard', 'PayPal', 'Stripe'].map(payment => (
                                 <div key={payment} style={{
-                                    padding: '0.25rem 0.75rem',
-                                    background: 'rgba(255,255,255,0.1)',
-                                    borderRadius: 'var(--radius)',
-                                    fontSize: '0.75rem',
-                                    color: '#cbd5e1'
+                                    padding: 'var(--space-1) var(--space-3)',
+                                    background: 'var(--gray-800)',
+                                    border: '1px solid var(--gray-700)',
+                                    borderRadius: 'var(--radius-md)',
+                                    fontSize: 'var(--text-xs)',
+                                    color: 'var(--gray-400)',
+                                    fontWeight: 600
                                 }}>
                                     {payment}
                                 </div>

@@ -5,61 +5,98 @@ import Link from 'next/link';
 const RailProductCard = ({ product }) => (
     <Link
         href={`/product/${product.slug}`}
-        className="card hover-lift"
+        className="card"
         style={{
-            width: 260,
-            padding: 'var(--space-lg)',
-            background:
-                'radial-gradient(circle at top right, rgba(20,110,180,0.08), transparent 60%), white',
+            minWidth: 280,
+            maxWidth: 280,
+            padding: 'var(--space-4)',
             display: 'flex',
             flexDirection: 'column',
-            gap: 'var(--space-sm)',
+            gap: 'var(--space-3)',
         }}
     >
         <div
             style={{
-                height: 150,
+                height: 180,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                marginBottom: 'var(--space-sm)',
+                background: 'var(--gray-100)',
+                borderRadius: 'var(--radius-lg)',
+                overflow: 'hidden'
             }}
         >
             <img
                 src={product.images?.[0]}
                 alt={product.title}
-                style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'cover' }}
             />
         </div>
-        <p style={{ fontSize: '0.8rem', color: 'var(--gray)' }}>{product.brand}</p>
-        <h4 style={{ fontSize: '1rem', minHeight: 48 }}>{product.title}</h4>
-        <p style={{ margin: 0, fontWeight: 700, color: '#b12704' }}>${product.price}</p>
-        {product.badges?.length > 0 && (
-            <span className="badge badge-primary" style={{ marginTop: '0.25rem' }}>
-                {product.badges[0]}
-            </span>
-        )}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', flex: 1 }}>
+            <p style={{ 
+                fontSize: 'var(--text-xs)', 
+                color: 'var(--text-tertiary)',
+                textTransform: 'uppercase',
+                fontWeight: 600,
+                letterSpacing: '0.05em',
+                margin: 0
+            }}>
+                {product.brand || 'Brand'}
+            </p>
+            <h4 style={{ 
+                fontSize: 'var(--text-base)', 
+                fontWeight: 600,
+                minHeight: 48,
+                lineHeight: 'var(--leading-snug)',
+                color: 'var(--text-primary)',
+                margin: 0,
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden'
+            }}>
+                {product.title}
+            </h4>
+            <p style={{ 
+                margin: 0, 
+                fontWeight: 700, 
+                fontSize: 'var(--text-xl)',
+                background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent'
+            }}>
+                ${product.price}
+            </p>
+            {product.badges?.length > 0 && (
+                <span className="badge badge-primary">
+                    {product.badges[0]}
+                </span>
+            )}
+        </div>
     </Link>
 );
 
 export default function ProductRail({ title, subtitle, products = [], cta }) {
     if (!products.length) return null;
     return (
-        <section
-            className="home-rail"
-            style={{
-                padding: 'var(--space-xl)',
-                borderRadius: 'var(--radius-2xl)',
-                background:
-                    'linear-gradient(135deg, rgba(19,25,33,0.98), rgba(35,47,62,0.96))',
-                color: 'white',
-            }}
-        >
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--space-md)' }}>
+        <section className="glass" style={{
+            padding: 'var(--space-10)',
+            borderRadius: 'var(--radius-2xl)',
+            background: 'linear-gradient(135deg, rgba(254,111,94,0.03), rgba(0,118,182,0.03))'
+        }}>
+            <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center',
+                marginBottom: 'var(--space-8)' 
+            }}>
                 <div>
-                    <h2 style={{ fontSize: '1.6rem' }}>{title}</h2>
+                    <h2 style={{ marginBottom: 'var(--space-2)' }}>{title}</h2>
                     {subtitle && (
-                        <p style={{ color: 'rgba(229,231,235,0.9)', fontSize: '0.95rem' }}>
+                        <p style={{ 
+                            color: 'var(--text-secondary)', 
+                            fontSize: 'var(--text-lg)' 
+                        }}>
                             {subtitle}
                         </p>
                     )}
@@ -67,7 +104,7 @@ export default function ProductRail({ title, subtitle, products = [], cta }) {
                 {cta && (
                     <Link
                         href={cta.href}
-                        style={{ color: 'var(--brand-orange)', fontWeight: 600 }}
+                        className="btn btn-outline btn-sm"
                     >
                         {cta.label}
                     </Link>

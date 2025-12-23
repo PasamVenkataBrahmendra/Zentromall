@@ -322,6 +322,7 @@ const bookProducts = [
 const sampleReviews = [
     {
         rating: 5,
+        title: 'Excellent Quality',
         comment: 'Excellent quality! Better than expected. Fast delivery. Highly recommended!',
         verified: true,
         helpful: 234,
@@ -329,6 +330,7 @@ const sampleReviews = [
     },
     {
         rating: 5,
+        title: 'Love it!',
         comment: 'Love this product! Amazing value for money. Already recommended to friends.',
         verified: true,
         helpful: 156,
@@ -336,6 +338,7 @@ const sampleReviews = [
     },
     {
         rating: 4,
+        title: 'Good Quality',
         comment: 'Good quality, slight color variation from pictures, but overall satisfied.',
         verified: true,
         helpful: 89,
@@ -343,6 +346,7 @@ const sampleReviews = [
     },
     {
         rating: 4,
+        title: 'Works Great',
         comment: 'Works as described. Good build quality. Delivery could be faster.',
         verified: true,
         helpful: 67,
@@ -350,6 +354,7 @@ const sampleReviews = [
     },
     {
         rating: 5,
+        title: 'Perfect!',
         comment: 'Perfect! Exactly what I was looking for. Great customer service.',
         verified: true,
         helpful: 234,
@@ -357,6 +362,7 @@ const sampleReviews = [
     },
     {
         rating: 3,
+        title: 'Average',
         comment: 'Average quality. Does the job but nothing special.',
         verified: true,
         helpful: 45,
@@ -379,7 +385,7 @@ module.exports = {
     bookProducts,
     sampleReviews,
     allKaggleProducts,
-    
+
     // Metadata for dataset sources
     datasetSources: {
         'kaggle-olist': {
@@ -407,18 +413,18 @@ module.exports = {
             description: 'Book metadata and reviews'
         }
     },
-    
+
     // Function to get random sample reviews
-    getRandomReviews: function(count = 5) {
+    getRandomReviews: function (count = 5) {
         const reviews = [];
         for (let i = 0; i < count; i++) {
             reviews.push(sampleReviews[Math.floor(Math.random() * sampleReviews.length)]);
         }
         return reviews;
     },
-    
+
     // Function to integrate with existing products
-    combineWithExisting: function(existingProducts) {
+    combineWithExisting: function (existingProducts) {
         return {
             existing: existingProducts,
             kaggleEnhanced: allKaggleProducts,
