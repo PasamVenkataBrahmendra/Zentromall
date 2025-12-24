@@ -180,3 +180,4 @@ export const FALLBACK_COLLECTIONS = {
   trendingSearches: ['Wireless earbuds', 'Robot vacuum', 'Denim jackets', 'Air fryer combo']
 };
 
+export const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/600x600?text=Image+Not+Available';
