@@ -11,7 +11,7 @@ import { useRecentlyViewed } from '../../../src/context/RecentlyViewedContext';
 import { useWishlist } from '../../../src/context/WishlistContext';
 import ProductRecommendations from '../../../src/components/ProductRecommendations';
 import ProductRail from '../../../src/components/ProductRail';
-import { FaCheckCircle } from 'react-icons/fa';
+import { FaCheckCircle, FaHeart, FaExchangeAlt } from 'react-icons/fa';
 import { FALLBACK_PRODUCTS } from '../../../src/data/fallbackData';
 
 const InfoRow = ({ label, value }) => (
