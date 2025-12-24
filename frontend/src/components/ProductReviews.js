@@ -21,7 +21,7 @@ const ProductReviews = ({ productId }) => {
     const fetchReviews = async () => {
         try {
             const { data } = await api.get(`/products/${productId}/reviews`);
-            setReviews(data);
+            setReviews(data.reviews || []);
         } catch (error) {
             console.error('Error fetching reviews:', error);
         } finally {
