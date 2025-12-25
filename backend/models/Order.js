@@ -3,15 +3,15 @@ const mongoose = require('mongoose');
 const orderSchema = new mongoose.Schema({
     // User reference
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    
+
     // Unique order identifier
-    orderNumber: { 
-        type: String, 
-        unique: true, 
+    orderNumber: {
+        type: String,
+        unique: true,
         sparse: true,
         required: true
     },
-    
+
     // Order items
     items: [{
         product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
@@ -21,7 +21,7 @@ const orderSchema = new mongoose.Schema({
         originalPrice: { type: Number },
         discount: { type: Number, default: 0 }
     }],
-    
+
     // Shipping details
     shippingAddress: {
         street: String,
@@ -31,7 +31,7 @@ const orderSchema = new mongoose.Schema({
         country: String,
         phone: String
     },
-    
+
     billingAddress: {
         street: String,
         city: String,
@@ -39,9 +39,9 @@ const orderSchema = new mongoose.Schema({
         zip: String,
         country: String
     },
-    
+
     // Payment details
-    paymentMethod: { type: String, enum: ['cod', 'card', 'upi', 'netbanking'], default: 'cod' },
+    paymentMethod: { type: String, enum: ['cod', 'card', 'credit_card', 'debit_card', 'upi', 'netbanking', 'razorpay', 'stripe', 'wallet'], default: 'cod' },
     paymentStatus: { type: String, enum: ['pending', 'paid', 'failed', 'refunded'], default: 'pending' },
     paymentDetails: {
         transactionId: String,
@@ -51,34 +51,34 @@ const orderSchema = new mongoose.Schema({
         refundAmount: Number,
         refundStatus: String
     },
-    
+
     // Order status
     orderStatus: { type: String, enum: ['processing', 'confirmed', 'shipped', 'in_transit', 'delivered', 'returned', 'cancelled'], default: 'processing' },
-    
+
     // Tracking information
     trackingNumber: String,
     carrier: String, // 'fedex', 'dhl', 'local', etc.
     trackingUrl: String,
-    
+
     // Delivery dates
     estimatedDeliveryDate: Date,
     actualDeliveryDate: Date,
-    
+
     // Pricing breakdown
     subtotal: { type: Number, required: true },
     discount: { type: Number, default: 0 },
     tax: { type: Number, default: 0 },
     shippingCost: { type: Number, default: 0 },
     totalAmount: { type: Number, required: true },
-    
+
     // Coupon/Promo
     couponCode: String,
     couponDiscount: { type: Number, default: 0 },
-    
+
     // Notes
     orderNotes: String,
     cancelReason: String,
-    
+
     // Return/Refund
     isReturnable: { type: Boolean, default: true },
     returnReason: String,
@@ -87,7 +87,7 @@ const orderSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Generate order number before saving
-orderSchema.pre('save', async function(next) {
+orderSchema.pre('save', async function (next) {
     if (!this.orderNumber) {
         // Format: ORD-TIMESTAMP-RANDOM
         const timestamp = Date.now();
