@@ -29,6 +29,7 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+app.use('/api', require('./routes/reviewRoutes'));
 app.use('/api/users', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
@@ -42,7 +43,6 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/coupons', couponRoutes); // Mounted coupon routes
 app.use('/api/ai-shop', require('./routes/aiShopRoutes'));
 app.use('/api/flash-sales', require('./routes/flashSaleRoutes'));
-app.use('/api', require('./routes/reviewRoutes'));
 
 // Health Check
 app.get('/health', (req, res) => {

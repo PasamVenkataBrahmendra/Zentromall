@@ -13,6 +13,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '../context/AuthContext';
+import api from '../utils/api';
 import styles from './MultiStepCheckout.module.css';
 import AddressForm from './checkout/AddressForm';
 import ShippingMethod from './checkout/ShippingMethod';
@@ -22,6 +24,7 @@ import OrderConfirmation from './checkout/OrderConfirmation';
 
 const MultiStepCheckout = () => {
   const router = useRouter();
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [sessionId, setSessionId] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -38,36 +41,34 @@ const MultiStepCheckout = () => {
   useEffect(() => {
     const initializeCheckout = async () => {
       try {
-        setLoading(true);
-        const userId = localStorage.getItem('userId');
-        
-        const response = await fetch(`/api/checkout/initialize/${userId}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to initialize checkout');
+        if (!user) {
+          console.log('User not found in MultiStepCheckout, skipping init');
+          return;
         }
+        setLoading(true);
+        const userId = user._id;
+        console.log('Initializing checkout for user:', userId);
 
-        const data = await response.json();
+        const response = await api.post(`/checkout/initialize/${userId}`);
+        const data = response.data;
+
         setSessionId(data.checkout.sessionId);
         setCheckoutData(prev => ({
           ...prev,
           pricing: data.checkout.pricing
         }));
       } catch (err) {
-        setError(err.message);
+        console.error('Checkout Initialization Error:', err);
+        setError(err.response?.data?.error || err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    initializeCheckout();
-  }, []);
+    if (user && !sessionId) {
+      initializeCheckout();
+    }
+  }, [user]);
 
   // Fetch checkout data
   useEffect(() => {
@@ -75,18 +76,15 @@ const MultiStepCheckout = () => {
 
     const fetchCheckout = async () => {
       try {
-        const response = await fetch(`/api/checkout/${sessionId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setCurrentStep(data.checkout.currentStep);
-          setCheckoutData({
-            shippingAddress: data.checkout.shippingAddress,
-            shippingMethod: data.checkout.shippingMethod,
-            paymentMethod: data.checkout.paymentMethod,
-            pricing: data.checkout.pricing,
-            coupon: data.checkout.coupon
-          });
-        }
+        const { data } = await api.get(`/checkout/${sessionId}`);
+        setCurrentStep(data.checkout.currentStep);
+        setCheckoutData({
+          shippingAddress: data.checkout.shippingAddress,
+          shippingMethod: data.checkout.shippingMethod,
+          paymentMethod: data.checkout.paymentMethod,
+          pricing: data.checkout.pricing,
+          coupon: data.checkout.coupon
+        });
       } catch (err) {
         console.error('Fetch checkout error:', err);
       }
@@ -102,6 +100,10 @@ const MultiStepCheckout = () => {
 
       let endpoint = '';
       let body = {};
+
+      console.log('Handling next step:', currentStep);
+      console.log('Session ID:', sessionId);
+      console.log('Step Data:', stepData);
 
       switch (currentStep) {
         case 1:
@@ -120,25 +122,15 @@ const MultiStepCheckout = () => {
           break;
       }
 
-      const response = await fetch(`/api/checkout/${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(body)
-      });
+      console.log('Calling API endpoint:', `/checkout/${endpoint}`, body);
+      const { data } = await api.post(`/checkout/${endpoint}`, body);
+      console.log('API Response:', data);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update checkout');
-      }
-
-      const data = await response.json();
       setCheckoutData(data.checkout);
       setCurrentStep(data.checkout.currentStep);
     } catch (err) {
-      setError(err.message);
+      console.error('Handle Next Step Error:', err);
+      setError(err.response?.data?.error || err.message);
     } finally {
       setLoading(false);
     }
@@ -208,20 +200,9 @@ const MultiStepCheckout = () => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/api/checkout/${sessionId}/complete`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
+      const response = await api.post(`/checkout/${sessionId}/complete`);
+      const data = response.data;
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create order');
-      }
-
-      const data = await response.json();
       setCheckoutData(prev => ({
         ...prev,
         orderId: data.order.orderId,
@@ -229,7 +210,7 @@ const MultiStepCheckout = () => {
       }));
       setCurrentStep(5);
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.error || err.message);
     } finally {
       setLoading(false);
     }

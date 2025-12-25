@@ -78,12 +78,28 @@ export default function ProductDetails() {
                                         padding: '0.25rem'
                                     }}
                                 >
-                                    <img src={img} alt={`${product.title}-${index}`} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                                    <img
+                                        src={img}
+                                        alt={`${product.title}-${index}`}
+                                        onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = 'https://via.placeholder.com/600x600?text=Image+Not+Available';
+                                        }}
+                                        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                                    />
                                 </button>
                             ))}
                         </div>
                         <div style={{ flex: 1, background: '#f7fafa', borderRadius: 'var(--radius-xl)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <img src={product.images?.[activeImage]} alt={product.title} style={{ maxWidth: '100%', maxHeight: 420 }} />
+                            <img
+                                src={product.images?.[activeImage]}
+                                alt={product.title}
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = 'https://via.placeholder.com/600x600?text=Image+Not+Available';
+                                }}
+                                style={{ maxWidth: '100%', maxHeight: 420 }}
+                            />
                         </div>
                     </div>
                     <div style={{ marginTop: 'var(--space-xl)' }}>

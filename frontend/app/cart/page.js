@@ -179,9 +179,11 @@ export default function Cart() {
                         <span>${cart.totalPrice}</span>
                     </div>
 
-                    <button className="btn btn-primary" style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: '10px' }}>
-                        Proceed to Checkout <FaArrowRight />
-                    </button>
+                    <Link href="/checkout" style={{ textDecoration: 'none' }}>
+                        <button className="btn btn-primary" style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: '10px' }}>
+                            Proceed to Checkout <FaArrowRight />
+                        </button>
+                    </Link>
                 </div>
             </div>
         </div>

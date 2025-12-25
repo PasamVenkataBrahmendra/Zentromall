@@ -54,31 +54,26 @@ const checkoutSchema = new mongoose.Schema(
     shippingMethod: {
       method: {
         type: String,
-        enum: ['standard', 'express', 'overnight'],
-        required: true
+        enum: ['standard', 'express', 'overnight']
       },
       cost: {
-        type: Number,
-        required: true
+        type: Number
       },
       estimatedDays: {
-        type: Number,
-        required: true
+        type: Number
       },
       carrier: String // e.g., Fedex, UPS, DHL
     },
 
     // Step 3: Payment Method
     paymentMethod: {
-      type: {
-        type: String,
-        enum: ['credit_card', 'debit_card', 'upi', 'razorpay', 'stripe', 'wallet', 'cod'],
-        required: true
-      },
       gateway: {
         type: String,
-        enum: ['razorpay', 'stripe', 'native', 'cod'],
-        required: true
+        enum: ['razorpay', 'stripe', 'native', 'cod']
+      },
+      type: {
+        type: String,
+        enum: ['credit_card', 'debit_card', 'upi', 'razorpay', 'stripe', 'wallet', 'cod']
       },
       details: {
         // For Razorpay

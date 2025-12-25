@@ -3,11 +3,14 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../src/context/AuthContext';
+import { useCart } from '../../src/context/CartContext';
+import api from '../../src/utils/api';
 import MultiStepCheckout from '../../src/components/MultiStepCheckout';
 
 export default function CheckoutPage() {
     const router = useRouter();
     const { user, loading } = useAuth();
+    const { cart } = useCart();
     const [error, setError] = useState(null);
     const [couponCode, setCouponCode] = useState('');
     const [discount, setDiscount] = useState(0);
@@ -15,7 +18,8 @@ export default function CheckoutPage() {
     const [couponMessage, setCouponMessage] = useState('');
 
     const calculateTotal = () => {
-        const subtotal = cart.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+        if (!cart || !cart.items) return 0;
+        const subtotal = cart.items.reduce((acc, item) => acc + (item.product.price || 0) * (item.quantity || 1), 0);
         // Assuming free shipping for now or managed elsewhere
         return Math.max(0, subtotal - discount);
     };
@@ -24,7 +28,7 @@ export default function CheckoutPage() {
         if (!couponCode.trim()) return;
         setCouponMessage('');
         try {
-            const subtotal = cart.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+            const subtotal = cart?.items?.reduce((acc, item) => acc + (item.product.price || 0) * (item.quantity || 1), 0) || 0;
             const { data } = await api.post('/coupons/validate', {
                 code: couponCode,
                 cartTotal: subtotal
@@ -67,10 +71,10 @@ export default function CheckoutPage() {
                 <div className="card" style={{ position: 'sticky', top: '2rem' }}>
                     <h2>Order Summary</h2>
                     <div style={{ margin: '1rem 0' }}>
-                        {cart.map(item => (
+                        {cart && cart.items && cart.items.map(item => (
                             <div key={item.product._id} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
                                 <span>{item.product.title} x {item.quantity}</span>
-                                <span>${(item.product.price * item.quantity).toFixed(2)}</span>
+                                <span>${((item.product.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
                             </div>
                         ))}
                     </div>
@@ -102,7 +106,7 @@ export default function CheckoutPage() {
                     <div style={{ borderTop: '2px solid var(--gray-lighter)', paddingTop: '1rem' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                             <span>Subtotal</span>
-                            <span>${cart.reduce((acc, item) => acc + item.product.price * item.quantity, 0).toFixed(2)}</span>
+                            <span>${(cart?.items?.reduce((acc, item) => acc + (item.product.price || 0) * (item.quantity || 1), 0) || 0).toFixed(2)}</span>
                         </div>
                         {discount > 0 && (
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', color: 'var(--success)' }}>

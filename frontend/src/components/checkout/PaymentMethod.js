@@ -7,6 +7,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import api from '../../utils/api';
 import RazorpayPayment from '../payment/RazorpayPayment';
 import StripePayment from '../payment/StripePayment';
 import styles from './PaymentMethod.module.css';
@@ -19,21 +20,14 @@ const PaymentMethod = ({ sessionId, amount = 0, selectedMethod, onNext, onPrevio
   const setPaymentMethod = async (gatewayToSet) => {
     try {
       setError(null);
-      const response = await fetch(`/api/checkout/${sessionId}/payment`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: gatewayToSet, gateway: gatewayToSet })
+      await api.post(`/checkout/${sessionId}/payment`, {
+        type: gatewayToSet,
+        gateway: gatewayToSet
       });
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Failed to set payment method');
-      }
-
-      const data = await response.json();
       setShowPayment(true);
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.error || err.message);
     }
   };
 

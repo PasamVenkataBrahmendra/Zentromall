@@ -76,6 +76,10 @@ export default function ProductCard({ product }) {
                         <img
                             src={product.images[0]}
                             alt={product.title}
+                            onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = 'https://via.placeholder.com/600x600?text=Image+Not+Available';
+                            }}
                             style={{
                                 width: '100%',
                                 height: '100%',
@@ -106,7 +110,7 @@ export default function ProductCard({ product }) {
                                 addToCart(product._id);
                             }}
                             className="btn btn-primary btn-sm"
-                            style={{ 
+                            style={{
                                 flex: 1,
                                 boxShadow: 'var(--shadow-lg)'
                             }}
@@ -116,7 +120,7 @@ export default function ProductCard({ product }) {
                     </div>
 
                     {/* Wishlist Button */}
-                    <button 
+                    <button
                         onClick={(e) => e.preventDefault()}
                         style={{
                             position: 'absolute',
@@ -154,19 +158,19 @@ export default function ProductCard({ product }) {
             </Link>
 
             {/* Product Info */}
-            <div style={{ 
-                padding: 'var(--space-4)', 
-                display: 'flex', 
-                flexDirection: 'column', 
-                flex: 1, 
-                gap: 'var(--space-2)' 
+            <div style={{
+                padding: 'var(--space-4)',
+                display: 'flex',
+                flexDirection: 'column',
+                flex: 1,
+                gap: 'var(--space-2)'
             }}>
                 {/* Brand and Rating */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ 
-                        fontSize: 'var(--text-xs)', 
-                        color: 'var(--text-tertiary)', 
-                        textTransform: 'uppercase', 
+                    <span style={{
+                        fontSize: 'var(--text-xs)',
+                        color: 'var(--text-tertiary)',
+                        textTransform: 'uppercase',
                         letterSpacing: '0.05em',
                         fontWeight: 600
                     }}>
@@ -189,22 +193,22 @@ export default function ProductCard({ product }) {
                         overflow: 'hidden',
                         transition: 'color var(--transition-base)'
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary)'}
-                    onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-primary)'}>
+                        onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary)'}
+                        onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-primary)'}>
                         {product.title}
                     </h3>
                 </Link>
 
                 {/* Price */}
-                <div style={{ 
-                    display: 'flex', 
-                    alignItems: 'baseline', 
-                    gap: 'var(--space-2)', 
-                    marginTop: 'auto' 
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'baseline',
+                    gap: 'var(--space-2)',
+                    marginTop: 'auto'
                 }}>
-                    <span style={{ 
-                        fontSize: 'var(--text-2xl)', 
-                        fontWeight: 700, 
+                    <span style={{
+                        fontSize: 'var(--text-2xl)',
+                        fontWeight: 700,
                         color: 'var(--text-primary)',
                         background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
                         WebkitBackgroundClip: 'text',
@@ -225,8 +229,8 @@ export default function ProductCard({ product }) {
 
                 {/* Highlights */}
                 {product.highlights?.length > 0 && (
-                    <p style={{ 
-                        fontSize: 'var(--text-sm)', 
+                    <p style={{
+                        fontSize: 'var(--text-sm)',
                         color: 'var(--text-secondary)',
                         lineHeight: 'var(--leading-snug)',
                         margin: 0,
