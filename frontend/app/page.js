@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { FaRocket, FaShieldAlt, FaTruck, FaHeadset, FaMobileAlt, FaTshirt, FaHome, FaGamepad, FaMagic } from 'react-icons/fa';
 import ProductCard from '../src/components/ProductCard';
 import ProductRail from '../src/components/ProductRail';
+import ApiTest from '../src/components/ApiTest';
 import { FALLBACK_COLLECTIONS } from '../src/data/fallbackData';
 
 export default function Home() {
@@ -14,11 +15,20 @@ export default function Home() {
 
   useEffect(() => {
     const fetchCollections = async () => {
+      console.log('Starting fetchCollections...');
       try {
+        console.log('Making API request to /products/collections/featured');
         const { data } = await api.get('/products/collections/featured');
+        console.log('API request successful, data:', data);
         setCollections(data);
       } catch (error) {
         console.error('Error fetching featured collections:', error);
+        console.error('Full error object:', error);
+        if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+          console.warn('Backend server may not be running. Using fallback data.');
+          console.warn('Make sure the backend server is running on http://localhost:5000');
+        }
+        console.log('Using fallback collections');
         setCollections(FALLBACK_COLLECTIONS);
       } finally {
         setLoading(false);
@@ -53,6 +63,7 @@ export default function Home() {
 
   return (
     <div style={{ paddingBottom: 'var(--space-24)' }}>
+      <ApiTest />
       {/* Hero Section */}
       <section style={{
         position: 'relative',

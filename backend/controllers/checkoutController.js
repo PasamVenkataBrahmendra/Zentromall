@@ -19,7 +19,12 @@ const crypto = require('crypto');
 // Initialize Checkout Session
 exports.initializeCheckout = async (req, res) => {
   try {
-    const { userId } = req.params;
+    // Use authenticated user from middleware (more secure)
+    const userId = req.user?._id || req.params.userId;
+
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
 
     // Validate user
     const user = await User.findById(userId);
@@ -29,15 +34,32 @@ exports.initializeCheckout = async (req, res) => {
 
     // Get user's cart
     const cart = await Cart.findOne({ user: userId }).populate('items.product');
-    if (!cart || cart.items.length === 0) {
+    if (!cart || !cart.items || cart.items.length === 0) {
       return res.status(400).json({ error: 'Cart is empty' });
     }
 
+    // Validate cart items have required data
+    const validItems = cart.items.filter(item => {
+      const price = item.product?.price || item.price;
+      return price && item.quantity;
+    });
+
+    if (validItems.length === 0) {
+      return res.status(400).json({ error: 'Cart items are invalid' });
+    }
+
     // Calculate pricing
-    const subtotal = orderCalculator.calculateSubtotal(cart.items);
-    const tax = orderCalculator.calculateTax(subtotal);
-    const shipping = orderCalculator.calculateShipping(subtotal);
-    const total = orderCalculator.calculateTotal(subtotal, tax, shipping);
+    // Map cart items to format expected by orderCalculator
+    const itemsForCalculation = validItems.map(item => ({
+      price: item.product?.price || item.price || 0,
+      quantity: item.quantity || 1
+    }));
+
+    const pricing = orderCalculator.calculateTotal(itemsForCalculation);
+    const subtotal = pricing.subtotal;
+    const tax = pricing.tax;
+    const shipping = pricing.shipping;
+    const total = pricing.total;
 
     // Create checkout session
     const sessionId = crypto.randomBytes(16).toString('hex');
@@ -47,12 +69,12 @@ exports.initializeCheckout = async (req, res) => {
       sessionId,
       currentStep: 1,
       status: 'initiated',
-      cart: cart.items.map(item => ({
-        productId: item.product._id,
+      cart: validItems.map(item => ({
+        productId: item.product?._id || item.product,
         quantity: item.quantity,
-        price: item.product.price,
-        discount: item.product.discount || 0,
-        subtotal: item.product.price * item.quantity
+        price: item.product?.price || item.price || 0,
+        discount: item.product?.discount || 0,
+        subtotal: (item.product?.price || item.price || 0) * item.quantity
       })),
       pricing: {
         subtotal,
@@ -78,7 +100,12 @@ exports.initializeCheckout = async (req, res) => {
     });
   } catch (error) {
     console.error('Initialize checkout error:', error);
-    res.status(500).json({ error: 'Failed to initialize checkout' });
+    console.error('Error stack:', error.stack);
+    res.status(500).json({ 
+      error: 'Failed to initialize checkout',
+      message: error.message,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 };
 
@@ -141,12 +168,12 @@ exports.setShippingAddress = async (req, res) => {
     }
 
     // Validate phone (10 digits)
-    if (!/^\d{10}$/.test(addressData.phone)) {
+    if (!addressData.phone || !addressData.phone.toString().match || !/^\d{10}$/.test(addressData.phone.toString())) {
       return res.status(400).json({ error: 'Phone must be 10 digits' });
     }
 
     // Validate zip code (6 digits)
-    if (!/^\d{6}$/.test(addressData.zipCode)) {
+    if (!addressData.zipCode || !addressData.zipCode.toString().match || !/^\d{6}$/.test(addressData.zipCode.toString())) {
       return res.status(400).json({ error: 'Zip code must be 6 digits' });
     }
 
@@ -217,11 +244,7 @@ exports.setShippingMethod = async (req, res) => {
 
     // Recalculate total
     checkout.pricing.shipping = cost;
-    checkout.pricing.total = orderCalculator.calculateTotal(
-      checkout.pricing.subtotal,
-      checkout.pricing.tax,
-      checkout.pricing.shipping
-    );
+    checkout.pricing.total = checkout.pricing.subtotal + checkout.pricing.tax + checkout.pricing.shipping - (checkout.pricing.discount || 0);
 
     checkout.currentStep = 3;
     checkout.markStepComplete(2);
@@ -432,12 +455,7 @@ exports.applyCoupon = async (req, res) => {
     };
 
     checkout.pricing.discount = discountAmount;
-    checkout.pricing.total = orderCalculator.calculateTotal(
-      checkout.pricing.subtotal,
-      checkout.pricing.tax,
-      checkout.pricing.shipping,
-      discountAmount
-    );
+    checkout.pricing.total = checkout.pricing.subtotal + checkout.pricing.tax + checkout.pricing.shipping - discountAmount;
 
     await checkout.save();
 

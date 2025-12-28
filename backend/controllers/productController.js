@@ -459,6 +459,48 @@ const getRecommendations = async (req, res) => {
     }
 };
 
+// @desc    Get new arrivals (products created in last 30 days)
+// @route   GET /api/products/new-arrivals
+// @access  Public
+const getNewArrivals = async (req, res) => {
+    try {
+        const { page = 1, limit = 20 } = req.query;
+        const parsedLimit = Math.min(parseInt(limit, 10) || 20, 50);
+        const parsedPage = Math.max(parseInt(page, 10) || 1, 1);
+        const skip = (parsedPage - 1) * parsedLimit;
+
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        const query = {
+            status: 'active',
+            createdAt: { $gte: thirtyDaysAgo }
+        };
+
+        const [products, total] = await Promise.all([
+            Product.find(query)
+                .populate('category', 'name slug')
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(parsedLimit),
+            Product.countDocuments(query)
+        ]);
+
+        res.json({
+            products,
+            pagination: {
+                total,
+                page: parsedPage,
+                pages: Math.ceil(total / parsedLimit),
+                limit: parsedLimit
+            }
+        });
+    } catch (error) {
+        console.error('getNewArrivals error:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     getProducts,
     getProductBySlug,
@@ -469,5 +511,6 @@ module.exports = {
     deleteProduct,
     getMyProducts,
     getFilterOptions,
-    getRecommendations
+    getRecommendations,
+    getNewArrivals
 };

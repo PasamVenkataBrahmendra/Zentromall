@@ -81,7 +81,13 @@ export default function Register() {
                         fontSize: '0.9rem',
                         textAlign: 'center'
                     }}>
-                        {error}
+                        <strong>Registration failed</strong>
+                        <div style={{ marginTop: '8px' }}>{error}</div>
+                        {error.includes('Cannot connect') && (
+                            <div style={{ marginTop: '8px', fontSize: '0.85rem', opacity: 0.8 }}>
+                                💡 Make sure the backend server is running: <code>cd backend && npm run dev</code>
+                            </div>
+                        )}
                     </div>
                 )}
 

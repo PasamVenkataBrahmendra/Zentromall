@@ -48,7 +48,22 @@ export const AuthProvider = ({ children }) => {
             router.push('/');
             return { success: true };
         } catch (error) {
-            return { success: false, error: error.response?.data?.message || 'Registration failed' };
+            console.error('Registration error:', error);
+            
+            // Provide more specific error messages
+            let errorMessage = 'Registration failed';
+            
+            if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+                errorMessage = 'Cannot connect to server. Please make sure the backend is running.';
+            } else if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            } else if (error.response?.status === 400) {
+                errorMessage = 'Invalid registration data. Please check your information.';
+            } else if (error.response?.status === 500) {
+                errorMessage = 'Server error. Please try again later.';
+            }
+            
+            return { success: false, error: errorMessage };
         }
     };
 

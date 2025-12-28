@@ -11,7 +11,8 @@ const {
     getRecommendations,
     getFeaturedCollections,
     getProductFiltersMeta,
-    getSearchSuggestions
+    getSearchSuggestions,
+    getNewArrivals
 } = require('../controllers/productController');
 
 const { protect, seller, admin } = require('../middleware/authMiddleware');
@@ -19,6 +20,7 @@ const { protect, seller, admin } = require('../middleware/authMiddleware');
 router.get('/collections/featured', getFeaturedCollections);
 router.get('/filters/meta', getProductFiltersMeta);
 router.get('/search/suggestions', getSearchSuggestions);
+router.get('/new-arrivals', getNewArrivals);
 router.route('/').get(getProducts).post(protect, seller, createProduct);
 router.route('/filters').get(getFilterOptions);
 router.route('/myproducts').get(protect, seller, getMyProducts);

@@ -32,18 +32,21 @@ const registerUser = async (req, res) => {
         });
 
         if (user) {
-            // Send Welcome Email
+            // Send Welcome Email (non-blocking)
             try {
                 const { welcomeTemplate } = require('../utils/emailTemplates');
                 const sendEmail = require('../utils/emailService');
 
-                await sendEmail({
+                // Don't await - send email asynchronously
+                sendEmail({
                     email: user.email,
                     subject: 'Welcome to ZentroMall! 🛍️',
                     html: welcomeTemplate(user.name)
+                }).catch(emailError => {
+                    console.error('Email sending failed (non-critical):', emailError);
                 });
             } catch (emailError) {
-                console.error('Email sending failed:', emailError);
+                console.error('Email setup failed (non-critical):', emailError);
                 // Continue execution, don't fail registration
             }
 

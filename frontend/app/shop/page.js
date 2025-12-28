@@ -50,6 +50,10 @@ function ShopView() {
                 setMeta(data);
             } catch (error) {
                 console.error('Failed to load filter metadata:', error);
+                if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+                    console.warn('⚠️ Backend server may not be running. Using fallback data.');
+                    console.warn('💡 Start the backend: cd backend && npm run dev');
+                }
                 setMeta(FALLBACK_META);
             }
         };
@@ -82,6 +86,10 @@ function ShopView() {
                 }
             } catch (error) {
                 console.error('Error fetching products:', error);
+                if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+                    console.warn('⚠️ Backend server may not be running. Using fallback data.');
+                    console.warn('💡 Start the backend: cd backend && npm run dev');
+                }
                 setProducts(FALLBACK_PRODUCTS);
                 setPagination({
                     total: FALLBACK_PRODUCTS.length,

@@ -41,7 +41,7 @@ const MultiStepCheckout = () => {
   useEffect(() => {
     const initializeCheckout = async () => {
       try {
-        if (!user) {
+        if (!user || !user._id) {
           console.log('User not found in MultiStepCheckout, skipping init');
           return;
         }
@@ -52,6 +52,10 @@ const MultiStepCheckout = () => {
         const response = await api.post(`/checkout/initialize/${userId}`);
         const data = response.data;
 
+        if (!data || !data.checkout) {
+          throw new Error('Invalid response from server');
+        }
+
         setSessionId(data.checkout.sessionId);
         setCheckoutData(prev => ({
           ...prev,
@@ -59,7 +63,17 @@ const MultiStepCheckout = () => {
         }));
       } catch (err) {
         console.error('Checkout Initialization Error:', err);
-        setError(err.response?.data?.error || err.message);
+        const errorMessage = err.response?.data?.error || err.response?.data?.message || err.message || 'Failed to initialize checkout';
+        setError(errorMessage);
+        
+        // Provide helpful error messages
+        if (err.response?.status === 400) {
+          if (errorMessage.includes('Cart is empty')) {
+            setError('Your cart is empty. Please add items to your cart before checkout.');
+          }
+        } else if (err.response?.status === 500) {
+          setError('Server error. Please try again or contact support.');
+        }
       } finally {
         setLoading(false);
       }

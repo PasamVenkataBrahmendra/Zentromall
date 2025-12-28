@@ -2,6 +2,7 @@
 
 export const FALLBACK_PRODUCTS = [
   {
+    _id: 'fallback-1',
     title: 'Wireless Bluetooth Headphones',
     slug: 'wireless-bluetooth-headphones',
     description: 'Premium noise-cancelling wireless headphones with 30-hour battery life, deep bass, and crystal clear sound.',
@@ -24,6 +25,7 @@ export const FALLBACK_PRODUCTS = [
     seller: { storeName: 'ZentroMall Official' }
   },
   {
+    _id: 'fallback-2',
     title: 'Smart Watch Series 7',
     slug: 'smart-watch-series-7',
     description: 'Advanced fitness tracking, heart rate monitor, GPS, water resistant, sleep tracking, 50+ workout modes.',
@@ -46,6 +48,7 @@ export const FALLBACK_PRODUCTS = [
     seller: { storeName: 'ZentroMall Official' }
   },
   {
+    _id: 'fallback-3',
     title: 'Portable Bluetooth Speaker',
     slug: 'portable-bluetooth-speaker',
     description: '360° sound, 20-hour battery, waterproof IPX7, deep bass, USB-C charging.',
@@ -68,6 +71,7 @@ export const FALLBACK_PRODUCTS = [
     seller: { storeName: 'PulseWave Store' }
   },
   {
+    _id: 'fallback-4',
     title: 'Classic Denim Jacket',
     slug: 'classic-denim-jacket',
     description: 'Vintage wash, 100% cotton, unisex fit, button closure, chest pockets, timeless style.',
@@ -90,6 +94,7 @@ export const FALLBACK_PRODUCTS = [
     seller: { storeName: 'Urban Thread' }
   },
   {
+    _id: 'fallback-5',
     title: 'Robot Vacuum Cleaner',
     slug: 'robot-vacuum-cleaner',
     description: 'Smart navigation, app control, auto-charging, HEPA filter, 2000Pa suction, quiet operation.',
@@ -112,6 +117,7 @@ export const FALLBACK_PRODUCTS = [
     seller: { storeName: 'HomeLuxe' }
   },
   {
+    _id: 'fallback-6',
     title: 'Yoga Mat Premium',
     slug: 'yoga-mat-premium',
     description: 'Non-slip, eco-friendly TPE, 6mm thick, includes carrying strap and bag.',

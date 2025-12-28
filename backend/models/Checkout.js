@@ -305,7 +305,7 @@ checkoutSchema.methods.validateCheckoutData = function () {
     if (!addr.addressLine1) errors.push('Address line 1 required');
     if (!addr.city) errors.push('City required');
     if (!addr.state) errors.push('State required');
-    if (!addr.zipCode || !/^\d{6}$/.test(addr.zipCode)) errors.push('Valid 6-digit zip code required');
+    if (!addr.zipCode || !addr.zipCode.toString().match || !/^\d{6}$/.test(addr.zipCode.toString())) errors.push('Valid 6-digit zip code required');
   }
 
   // Step 2: Shipping validation
